@@ -3,8 +3,9 @@ import time
 
 server_sock=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
 
+#Make sure port is same in server and client, ports 1-30
 port = 6
-#server_sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+
 server_sock.bind(("",port))
 server_sock.listen(1)
 
