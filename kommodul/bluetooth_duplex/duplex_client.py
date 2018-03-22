@@ -1,12 +1,24 @@
 import bluetooth
 import time
+import pickle
 from rasp_data import robot_data as rd
 
-robots[]
+robots = list()
 
-while i < 10:
-	robots.append(rd(i,i+1))
-	i = i + 1
+i = 1
+
+#pickle.dumps(robots,[2])
+
+stop = 10
+while i <= stop:
+	if (i == stop):
+		robots.append(rd(i,i+1,True))
+	else:
+		robots.append(rd(i,i+1))
+	i += 1
+
+for rob in robots:
+	print(rob)
 
 
 #Device adress found using finddevice.py
@@ -19,7 +31,15 @@ sock=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
 sock.connect((bd_addr, port))
 
 tic = time.clock()
-sock.send(robots)
+
+#for robot in robots:
+#		print(robot.stop)
+
+while True:
+	for robot in robots:
+		time.sleep(0.05)
+		sock.send(pickle.dumps(robot))
+		print(robot)
 
 toc = time.clock()
 print(toc-tic)
