@@ -5,32 +5,39 @@ import pickle
 #Rpi bluetooth adress
 bd_addr = "B8:27:EB:A3:F1:C9"
 
-def open_server(server_sock, port):
+def open_rec_server(server_sock, port):
     server_sock.bind(("",port))
 
-def listen_to_socket(server_sock):
+def listen_to_server(server_sock):
     server_sock.listen(1)
 
-def server_accept(server_sock):
+def rec_server_accept(server_sock):
     client_sock,address = server_sock.accept()
     print "Accepted connection from ",address
     return client_sock
 
-def close_server(client_sock, server_sock):
+def close_reciever(client_sock, server_sock):
     client_sock.close()
     server_sock.close()
+
+def connect_to_server(sock, bd_addr, port):
+	sock.connect((bd_addr, port))
+
+def close_sender(sock):
+	sock.close()
+
 
 def printls(ls):
     for item in ls:
         print(item)
 
-
 def main():
-    server_sock=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
+    server_sock_rec=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
+    server_sock_send=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
     #Make sure port is same in server and client, ports 1-30
-    open_server(server_sock,6)
-    listen_to_socket(server_sock)
-    client_sock = server_accept(server_sock)
+    open_rec_server(server_sock_rec,6)
+    listen_to_server(server_sock_rec)
+    client_sock = rec_server_accept(server_sock)
     
     upkl_list = list()
     tic = time.clock()
@@ -41,11 +48,12 @@ def main():
         upkl_list.append(upkl)
         if upkl.stop:
             break
-        if i == 20:
-            break
         i += 1
     printls(upkl_list)
-    close_server(client_sock, server_sock)
+    connect_to_server(server_sock_send, bd_addr, 5)
+    server_sock_send.send(pickle.dumps(upkl_list))
+    closer_sender(server_sock_send)
+    close_reciever(client_sock, server_sock)
 
 main()
 #print "received [%s]" % data
