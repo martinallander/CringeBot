@@ -37,7 +37,7 @@ def main():
     #Make sure port is same in server and client, ports 1-30
     open_rec_server(server_sock_rec,6)
     listen_to_server(server_sock_rec)
-    client_sock = rec_server_accept(server_sock)
+    client_sock = rec_server_accept(server_sock_rec)
     
     upkl_list = list()
     tic = time.clock()
@@ -51,9 +51,9 @@ def main():
         i += 1
     printls(upkl_list)
     connect_to_server(server_sock_send, bd_addr, 5)
-    server_sock_send.send(pickle.dumps(upkl_list))
-    closer_sender(server_sock_send)
-    close_reciever(client_sock, server_sock)
+    server_sock_send.send(pickle.dumps(upkl_list[1]))
+    close_sender(server_sock_send)
+    close_reciever(client_sock, server_sock_send)
 
 main()
 #print "received [%s]" % data
