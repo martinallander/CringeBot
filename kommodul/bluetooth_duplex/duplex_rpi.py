@@ -3,44 +3,40 @@ import time
 import pickle
 from rasp_data import robot_data as rd
 
-robots = list()
-
-i = 1
-
-#pickle.dumps(robots,[2])
-
-stop = 10
-while i <= stop:
-	if (i == stop):
-		robots.append(rd(i,i+1,True))
-	else:
-		robots.append(rd(i,i+1))
-	i += 1
-
-for rob in robots:
-	print(rob)
-
-
 #Device adress found using finddevice.py
-bd_addr = "98:5F:D3:35:FC:EA"
+ma_bd_addr = "98:5F:D3:35:FC:EA"
 
-#Make sure port is same in server and client, ports 1-30
-port = 6
+def make_robots(amount):
+	robots = list()
+	i = 1
+	while i <= amount:
+		if (i == amount):
+			robots.append(rd(i,i+1,True))
+		else:
+			robots.append(rd(i,i+1))
+		i += 1
+	return robots
 
-sock=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
-sock.connect((bd_addr, port))
+def connect_to_server(sock, bd_addr, port):
+	sock.connect((bd_addr, port))
 
-tic = time.clock()
+def close_server(sock):
+	sock.close()
 
-#for robot in robots:
-#		print(robot.stop)
+def main():
+	sock = bluetooth.BluetoothSocket( bluetooth.RFCOMM )
+	my_robots = make_robots(20)
+	connect_to_server(sock, ma_bd_addr, 6)
+	tic = time.clock()
+	while True:
+		for robot in my_robots:
+			time.sleep(0.05)
+			sock.send(pickle.dumps(robot))
+			print(robot)
 
-while True:
-	for robot in robots:
-		time.sleep(0.05)
-		sock.send(pickle.dumps(robot))
-		print(robot)
+	toc = time.clock()
+	print(toc-tic)
 
-toc = time.clock()
-print(toc-tic)
-sock.close()
+main()
+
+	
