@@ -2,6 +2,9 @@ import bluetooth
 import time
 import pickle
 
+#Rpi bluetooth adress
+bd_addr = "B8:27:EB:A3:F1:C9"
+
 server_sock=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
 
 #Make sure port is same in server and client, ports 1-30
