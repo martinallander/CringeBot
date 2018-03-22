@@ -47,22 +47,20 @@ def main():
 	server_sock_rec=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
 	
 	open_rec_server(server_sock_rec,5)
-        listen_to_server(server_sock_rec)
-        client_sock = rec_server_accept(server_sock)
-        
 	my_robots = make_robots(20)
 	connect_to_server(send_sock, ma_bd_addr, 6)
 	#tic = time.clock()
-	while True:
-		for robot in my_robots:
-			time.sleep(0.05)
-			send_sock.send(pickle.dumps(robot))
-			print(robot)
+	for robot in my_robots:
+		time.sleep(0.05)
+		send_sock.send(pickle.dumps(robot))
+		print(robot)
         #toc = time.clock()
+	listen_to_server(server_sock_rec)
+	client_sock = rec_server_accept(server_sock_rec)
 	close_sender(send_sock)
 	data = client_sock.recv(1024)
         upkl = pickle.loads(data)
-        printls(upkl)
+        print(upkl)
         close_reciever(client_sock, server_sock_rec)
 main()
 
