@@ -29,10 +29,10 @@ def main():
     server_sock=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
     open_server(server_sock,6)
     listen_to_client(server_sock)
-    client_sock = connection_acceot(server_sock)
+    client_sock = connection_accept(server_sock)
     time.sleep(10)
     client_sock.send("xD")
-    close.server()
+    close.server(client_sock, server_sock)
 main()
 
 
