@@ -18,21 +18,41 @@ def listen_to_client(server_sock):
 
 def close_server(client_sock, server_sock):
     client_sock.close()
-    server_sock.close()
+    server_sock.close	
 
 
 def printls(ls):
     for item in ls:
         print(item)
+        
+def send_end(sock):
+    sock.send("end")
 
 def main():
     server_sock=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
-    open_server(server_sock,6)
+    open_server(server_sock,15)
     listen_to_client(server_sock)
     client_sock = connection_accept(server_sock)
-    time.sleep(10)
-    client_sock.send("xD")
-    close.server(client_sock, server_sock)
+    i = 1
+    data = "sensor_data"
+    while True:
+    	time.sleep(0.05)
+    	if data == "sensor_data":
+    		client_sock.send("my_sensor_data")
+    	elif data == "up":
+    		client_sock.send("action move up")
+    	elif data == "down":
+    		client_sock.send("action move down")
+    	else:
+    		client_sock.send("N/A")
+    	
+    	data = client_sock.recv(1024)
+    	print(data)
+    	if data == "esc":
+    	     break
+    send_end(client_sock)
+    close_server(client_sock, server_sock)
+
 main()
 
 
