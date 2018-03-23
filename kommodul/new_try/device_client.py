@@ -17,12 +17,9 @@ def printls(ls):
 
 def main():
     sock=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
-    connect_to_server(sock, bd_addr, 5)
+    connect_to_server(sock, bd_addr, 6)
     data = sock.recv(1024)
     print("Recieved:")
     print(data)
-    close_client()
+    close_client(sock)
 main()
-    
-
-
