@@ -46,6 +46,4 @@ public:
         pos_y += dist * cos((angle + delta / 2) * PI / 180);
         angle += delta;
     }
-
-
 };
