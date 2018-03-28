@@ -1,5 +1,4 @@
 // SLAM.cpp : Defines the entry point for the console application.
-//
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -48,7 +47,7 @@ pair<string, string> split(const string &s, char delim)
     	     add_dist = true;
     	if (item == "Q:")
     	     add_q = true;
-    	}
+    }
     return data;
 }
 
@@ -56,39 +55,53 @@ pair<string, string> split(const string &s, char delim)
 
 int main()
 {
-    vector <pair<string, string>> words {18000};
+	Map map;
+	Robot rob;
+    vector <pair<string, string>> words;
     string line;
     pair<string, string> data;
     
     ifstream myfile ("lmao.txt");
     if (myfile.is_open())
-    
-    while (getline(myfile,line))
     {
-    	//cout << line << "\n";
-        if (line[0] == 'S')
-        {
-    	     cout << "bonus" << "\n";
-    	     data = split(line, ' ');
-	     if (!(data.first == "no_data"))
-	     	words.push_back(data);
+		while (getline(myfile,line))
+		{
+			//cout << line << "\n";
+			if (line[0] == 'S')
+			{
+    	     //cout << "bonus" << "\n";
+			 //data = split(line, ' ');
+				 continue;
+			if (!(data.first == "no_data"))
+				words.push_back(data);
+			}
+			else
+			{
+			data = split(line, ' ');
+			/*
+			cout << data.first;
+			cout << "  ";
+			cout << data.second;
+			cout << "\n";
+			*/
+			
+			if (!(data.first == "no_data"))
+				words.push_back(data);
+			}
+		}
 	}
-	else
-	{
-	     data = split(line, ' ');
-	     /*
-	     cout << data.first;
-	     cout << "  ";
-	     cout << data.second;
-	     cout << "\n";
-	     */
-	     
-	     if (!(data.first == "no_data"))
-	     	words.push_back(data);
-	}
-    }
-    
-    for_each(begin(words), end(words), )
+    for_each(begin(words), end(words), [&rob, &map](pair<string, string> p)
+    {	
+		/*
+		cout << stof(p.first);
+		cout << " ,";
+		cout << stof(p.second);
+		cout << "\n";
+		 */
+		add_dot(map, rob.get_data_x_coord(stof(p.second), stof(p.first)), 
+		rob.get_data_y_coord(stof(p.second), stof(p.first)));
+	});
+	map.print_map();
     
     myfile.close();
     return 0;

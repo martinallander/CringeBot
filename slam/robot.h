@@ -10,23 +10,25 @@ private:
     float pos_y;
     float angle;
 
-    Robot()
-    :pos_x {MAP_ROW / 2}, pos_y {MAP_COL / 2}, angle{0}
+public:
+	int MAP_ROW = 1000;
+    int MAP_COL = 1000;
+	Robot() :pos_x {500.0}, pos_y {500.0}, angle{0}
     {
     }
-
-public:
-	int MAP_ROW = 2000;
-    int MAP_COL = 2000;
+	
     
     int get_data_x_coord(float dist, float in_angle)
     {
-        return pos_x + dist * sin((angle + in_angle) * M_PI / 180);
+        float ret = pos_x + (dist / 20) * sin((angle + in_angle) * M_PI / 180);
+       // cout << pos_x << " " << sin((angle + in_angle) * M_PI / 180) << " \n";
+        return ret;
     }
 
     int get_data_y_coord(float dist, float in_angle)
     {
-        return pos_y + dist * cos((angle + in_angle) * M_PI / 180);
+        float ret = pos_y + (dist / 20) * cos((angle + in_angle) * M_PI / 180);
+        return ret;
     }
 
     float get_robot_x()
