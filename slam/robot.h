@@ -1,3 +1,4 @@
+#pragma once
 #include <math.h>
 
 using namespace std;
@@ -10,19 +11,22 @@ private:
     float angle;
 
     Robot()
-    :x {MAP_ROW / 2}, y {MAP_COL / 2}, angle{0}
+    :pos_x {MAP_ROW / 2}, pos_y {MAP_COL / 2}, angle{0}
     {
     }
 
 public:
+	int MAP_ROW = 2000;
+    int MAP_COL = 2000;
+    
     int get_data_x_coord(float dist, float in_angle)
     {
-        return pos_x + dist * sin((angle + in_angle) * PI / 180);
+        return pos_x + dist * sin((angle + in_angle) * M_PI / 180);
     }
 
     int get_data_y_coord(float dist, float in_angle)
     {
-        return pos_y + dist * cos((angle + in_angle) * PI / 180);
+        return pos_y + dist * cos((angle + in_angle) * M_PI / 180);
     }
 
     float get_robot_x()
@@ -42,8 +46,8 @@ public:
 
     void move(float dist, float delta) //delta-angle
     {
-        pos_x += dist * sin((angle + delta / 2) * PI / 180);
-        pos_y += dist * cos((angle + delta / 2) * PI / 180);
+        pos_x += dist * sin((angle + delta / 2) * M_PI / 180);
+        pos_y += dist * cos((angle + delta / 2) * M_PI / 180);
         angle += delta;
     }
 };

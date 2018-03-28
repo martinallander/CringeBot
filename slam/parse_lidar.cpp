@@ -1,6 +1,5 @@
 // SLAM.cpp : Defines the entry point for the console application.
 //
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -8,6 +7,8 @@
 #include <vector>
 #include <iterator>
 #include <algorithm>
+#include "translate_lidar.h"
+#include "robot.h"
 
 using namespace std;
 
@@ -51,6 +52,8 @@ pair<string, string> split(const string &s, char delim)
     return data;
 }
 
+
+
 int main()
 {
     vector <pair<string, string>> words {18000};
@@ -84,6 +87,8 @@ int main()
 	     	words.push_back(data);
 	}
     }
+    
+    for_each(begin(words), end(words), )
     
     myfile.close();
     return 0;
