@@ -1,5 +1,5 @@
 /*
- * GccApplication2.c
+ * i2c_config.c
  *
  * Created: 3/25/2018 10:28:29 AM
  *  Author: alfhu925
@@ -13,23 +13,21 @@
 	- eller en kombination av båda.....
 =======================================================================================*/
 
-#ifndef F_CPU
-#define F_CPU 8000000UL
-#endif
-
+#include <math.h>
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <util/twi.h>
 #include <stdio.h>
 
-#define F_SCL 100000UL
+#ifndef F_CPU
+#define F_CPU 16000000UL
+#endif
+
+
+#define F_SCL 50UL
 #define Prescaler 1
 #define TWBR_value ((((F_CPU/F_SCL)/Prescaler)-16)/2)
-
-/*=====================================================================================
-							Variable definitions
-=======================================================================================*/
 
 #define ERROR 1
 #define SUCCESS 0
@@ -38,15 +36,18 @@
 #define I2C_READ	1
 
 #define accel_addr 0x32
-#define test_reg_addr 0x20
+#define test_reg_addr 0x00
+#define ctrl_reg_1 0x20
+#define acc_x_l_reg 0x28
+#define acc_x_h_reg 0x29
+#define acc_y_l_reg 0x2A
+#define acc_y_h_reg 0x2B
+#define acc_z_l_reg 0x2C
+#define acc_z_h_reg 0x2D
 
 //volatile unsigned char i2c_addr;
 
-/*=====================================================================================
-						I2C configuration and initation
-=======================================================================================*/
-
-
+//Initializer of i2c
 void i2c_init(void)
 {	
 	sei();
@@ -57,31 +58,24 @@ void i2c_init(void)
 
 uint8_t i2c_start(uint8_t addr) //Takes the slave address and write/read bit. SAD + W/R.
 {
-	//reset I2C control register
-	TWCR = 0;
-	
+	TWCR = 0; //reset I2C control register
 	TWCR = (1 << TWINT)|(1 << TWSTA)|(1 << TWEN);
-	
 	while(!(TWCR & (1 << TWINT)));
 	
 	if((TWSR & 0xF8) != TW_START)
 	{
 		return ERROR;
 	}
-	//load TWDR with slave address
-	TWDR = addr;
-	//start transmission of address
-	TWCR = (1 << TWINT)|(1 << TWEN);
-	//Wait for the transmission to finish
-	while(!(TWCR & (1 << TWINT)));
+	TWDR = addr; //load TWDR with slave address
+	TWCR = (1 << TWINT)|(1 << TWEN); //start transmission of address
 	
+	while(!(TWCR & (1 << TWINT))); //Wait for the transmission to finish
 	uint8_t twst = TW_STATUS & 0xF8;
-	//check for acknowledge from slave
-	if((twst != TW_MT_SLA_ACK) && (twst != TW_MR_SLA_ACK))
+	
+	if((twst != TW_MT_SLA_ACK) && (twst != TW_MR_SLA_ACK)) //check for acknowledge from slave
 	{
 		return ERROR;
 	} 
-	
 	return SUCCESS;
 }
 
@@ -98,16 +92,13 @@ void i2c_stop(void)
 uint8_t i2c_write(uint8_t data)
 {
 	TWDR = data;
-	//start transmission of data
-	TWCR = (1 << TWINT)|(1 << TWEN);
-	//wait for the transmission to finish
-	while(!(TWCR & (1 << TWINT)));
-	//Check for data-transmit-acknowledge 
-	if((TWSR & 0xF8) != TW_MT_DATA_ACK)
+	TWCR = (1 << TWINT)|(1 << TWEN); //start transmission of data
+	while(!(TWCR & (1 << TWINT)));  //wait for the transmission to finish
+	
+	if((TWSR & 0xF8) != TW_MT_DATA_ACK) //Check for data-transmit-acknowledge 
 	{
 		return ERROR;
 	}
-	
 	return SUCCESS;
 }
 
@@ -132,14 +123,9 @@ uint8_t i2c_nack_read(void)
 //return status;
 //}
 
-/*=====================================================================================
-						Help functions for tests and controls
-=======================================================================================*/
-
-
+//Blink LED "times" number of times
 void led_blinker(uint8_t times)
 {
-	//Blink LED "times" number of times
 	for (uint8_t i = 0; i < times; i++)
 	{
 		PORTB |= (1<<0);
@@ -150,45 +136,40 @@ void led_blinker(uint8_t times)
 }
 
 
-/*=====================================================================================
-		The following functions are specific to each unit on the I2C-bus
-=======================================================================================*/
-
-/*=====================================================================================
---------------------------------Accelerometer - LSM303DLHC-----------------------------
-=======================================================================================*/
-void accel_i2c_write_reg(uint8_t reg_addr, uint8_t data)
+//The following functions are specific to each unit on the I2C-bus
+//Accelerometer - LSM303DLHC
+void i2c_write_reg(uint8_t dev_addr, uint8_t reg_addr, uint8_t data)
 {
-	i2c_start(accel_addr + I2C_WRITE);
+	i2c_start(dev_addr + I2C_WRITE);
 	i2c_write(reg_addr);
 	i2c_write(data);
 	i2c_stop();
 }
 
 //Data är där data sparas
-uint8_t accel_i2c_read_reg(uint8_t reg_addr, uint8_t data)
+short i2c_read_reg(uint8_t dev_addr, uint8_t reg_addr)
 {
-	i2c_start(accel_addr + I2C_WRITE);
+	i2c_start(dev_addr + I2C_WRITE);
 	i2c_write(reg_addr);
-	i2c_repeated_start(accel_addr + I2C_READ);
+	i2c_repeated_start(dev_addr + I2C_READ);
 	//osäker på om man ska ha och hur data = i2c_nack_read() fungerar...
-	data = i2c_nack_read();
+	uint8_t data = i2c_ack_read();
 	i2c_stop();	
 	return data;
 }
 
 /*
 OBS! Måste skapa en array-variabel för att spara undan datan. för att sedan tillkalla
-funktionen med. Kom ihåg längd på arrayen. Finns dynamisk variant. MALLOC google är är
+funktionen med. Kom ihåg längd på arrayen. Finns dynamisk variant. MALLOC google är
 din vän.
 
 KOLLA UPP OM MAN MÅSTE SÄTTA EN VISS BIT I REGISTRET FÖR ATT UTÖKA DET!!!!
 */
-void accel_i2c_multiple_read_reg(uint8_t reg_addr, uint8_t* data, uint16_t length)
+void i2c_mult_read_reg(uint8_t dev_addr, uint8_t reg_addr, uint8_t* data, uint16_t length)
 {
-	i2c_start(accel_addr + I2C_WRITE);
+	i2c_start(dev_addr + I2C_WRITE);
 	i2c_write(reg_addr);
-	i2c_repeated_start(accel_addr + I2C_READ);
+	i2c_repeated_start(dev_addr + I2C_READ);
 	
 	for (uint16_t i = 0; i < (length -1); i++)
 	{
@@ -200,49 +181,72 @@ void accel_i2c_multiple_read_reg(uint8_t reg_addr, uint8_t* data, uint16_t lengt
 	i2c_stop();
 }
 
+short shift_data(uint8_t high, uint8_t low)
+{
+	uint16_t data = 0;
+	uint16_t shifted = shifted * pow(2,8);
+	shifted + low;
+	return (short) shifted;
+}
+
 /*
 hur man "Castar" till ny datatyp ex: av Oscar!
 uint8_t sparad_data_16_B
 (float) sparad_data_16_B
 */
 
-
-
-
-
-
-
 int main(void)
 {
-	
+		
 	DDRB = (1 << DDB0);
 	PORTB = (0 << PORTB0);
-	_delay_ms(500);
+	//_delay_ms(500);
     //PORTB = 0x00;
 	//kanske behöver en array?
-	uint8_t saved_data = 0x00;
+
 	i2c_init();
-	
-	accel_i2c_write_reg(test_reg_addr,0x55);
-	
+	volatile uint8_t x_l_data = 0;
+	volatile uint8_t x_h_data = 0;
+	volatile uint8_t y_l_data = 0;
+	volatile uint8_t y_h_data = 0;
+	volatile uint8_t z_l_data = 0;
+	volatile uint8_t z_h_data = 0;
 	//while (1)
 	//{
 		//accel_i2c_read_reg(test_reg_addr, saved_data);
 	//}
-	uint8_t final_data = accel_i2c_read_reg(test_reg_addr, saved_data);
+	uint8_t set_ctrl_reg_1 = 0b01000111;
+	int i = 0;
+	i2c_write_reg(accel_addr, ctrl_reg_1, set_ctrl_reg_1);
+	while(i < 1000){
+		x_l_data = i2c_read_reg(accel_addr, acc_x_l_reg);
+		x_h_data = i2c_read_reg(accel_addr, acc_x_h_reg);
+		y_l_data = i2c_read_reg(accel_addr, acc_y_l_reg);
+		y_h_data = i2c_read_reg(accel_addr, acc_y_h_reg);
+		z_l_data = i2c_read_reg(accel_addr, acc_z_l_reg);
+		z_h_data = i2c_read_reg(accel_addr, acc_z_h_reg);
+		volatile short data_x = shift_data(x_l_data, x_h_data);
+		volatile short data_y = shift_data(y_l_data, y_h_data);
+		volatile short data_z = shift_data(z_l_data, z_h_data);
+		//led_blinker(1);
+		i = i + 1;
+	}
+	//DDRA = final_data;
 	//printf("Detta är värdet på sparad data%d\n", saved_data);	
 	
+	
 	//led_blinker(final_data);
-	led_blinker(saved_data);
-	if (final_data == 0x55)
-	{
-		led_blinker(50);
-	}
-	else
-	{
-		led_blinker(1);
-	}
-	return SUCCESS;
+	led_blinker(1);
+	//if (final_data == 0x55)
+	//{
+		//led_blinker(50);
+	//}
+	//else
+	//{
+		//led_blinker(1);
+	//}
+	//return SUCCESS;
+	return 0;
 }
 
 
