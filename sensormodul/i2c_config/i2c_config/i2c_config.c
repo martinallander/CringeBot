@@ -35,6 +35,13 @@
 #define I2C_WRITE	0
 #define I2C_READ	1
 
+
+#define what_should_interrupt_do
+
+#define writing_to_slave
+//Kanske ska vara uint8_t
+#define writing_data
+
 #define accel_addr 0x32
 #define test_reg_addr 0x00
 #define ctrl_reg_1 0x20
@@ -54,7 +61,7 @@ void i2c_init(void)
 	sei();
 	TWSR = 0x00; //Set prescaler-bitar to zero.
 	TWBR = 0x0C;
-	TWCR = (1 << TWEN);
+	TWCR = (1 << TWEN)|(1 << TWIE);
 }
 
 uint8_t i2c_start(uint8_t addr) //Takes the slave address and write/read bit. SAD + W/R.
@@ -215,17 +222,69 @@ uint8_t sparad_data_16_B
 	Kanske vi ska ersätta/sätta in ovanstående funktioner med/i följande "switch-case"?
 	
 	Blir "statement":en i vaje case vad vi vill ska hända EFTER att TWSR är case? 
-	
+	Svar: JA!
 	================================================================
 	
 	Jag tror/tolkar det som om att följande avbrottsrutin ersätter funktionerna ovan!!
-	 
-	 Eller ska vi istället ha avbrottsrutiner som använder funktionerna ovan
-	 genom att bara ha för i2c_read_reg/i2c_write_reg?
+	
+	
 	*/
 	
-//void ISR()
-//{
+/*
+===========================================
+Hur gör vi när vi har flera sensorer?!
+En global variabel för sensoradresserna.
+===========================================
+*/	
+	
+	
+void ISR(TWI_vect)
+{
+
+		//while (1)
+		//{
+		//accel_i2c_read_reg(test_reg_addr, saved_data);
+		//}
+		uint8_t set_ctrl_reg_1 = 0b01000111;
+		int i = 0;
+		i2c_write_reg(accel_addr, ctrl_reg_1, set_ctrl_reg_1);
+		while(i < 1000)
+		{
+			x_l_data = i2c_read_reg(accel_addr, acc_x_l_reg);
+			x_h_data = i2c_read_reg(accel_addr, acc_x_h_reg);
+			y_l_data = i2c_read_reg(accel_addr, acc_y_l_reg);
+			y_h_data = i2c_read_reg(accel_addr, acc_y_h_reg);
+			z_l_data = i2c_read_reg(accel_addr, acc_z_l_reg);
+			z_h_data = i2c_read_reg(accel_addr, acc_z_h_reg);
+			volatile short data_x = shift_data(x_l_data, x_h_data);
+			volatile short data_y = shift_data(y_l_data, y_h_data);
+			volatile short data_z = shift_data(z_l_data, z_h_data);
+			//led_blinker(1);
+			i = i + 1;
+		}
+};
+
+int main(void)
+{
+	volatile uint8_t x_l_data = 0;
+	volatile uint8_t x_h_data = 0;
+	volatile uint8_t y_l_data = 0;
+	volatile uint8_t y_h_data = 0;
+	volatile uint8_t z_l_data = 0;
+	volatile uint8_t z_h_data = 0;
+	DDRB = (1 << DDB0);
+	PORTB = (0 << PORTB0);
+	i2c_init();
+	while (1)
+	{
+		PORTB = 0x00;
+	}
+	led_blinker(1);
+	return 0;
+}
+
+	
+////TWEN ska alltid sättas till 1 right?
 	//switch ((TWSR & 0xF8))
 	//{
 	//case TW_START	:
@@ -235,11 +294,24 @@ uint8_t sparad_data_16_B
 //
 		//TWCR = 0; //reset I2C control register
 		//TWCR = (1 << TWINT)|(1 << TWSTA)|(1 << TWEN);
-		//*/
+	//*/
+	//TWDR =(accel_addr + I2C_WRITE);
+	//TWCR = (1 << TWINT)|(1 << TWEN); //start transmission of address
 		//break;
+	//case TW_REP_START	:
+	///*
+	//här läser man eller skriver till slaven. Vet inte hur man ska 
+	//välja mellan de två fallen. Tror inte vi behöver ha write här
+	//i alla fall
+	//*/
+	//TWDR = (accel_addr + I2C_READ);
+	//TWCR = (1 << TWINT)|(1 << TWEN); //start transmission of address
 	//case TW_MT_SLA_ACK	:
+		//TWDR = writing_data;
+		//TWCR = (1 << TWINT)|(1 << TWEN);
 		//break;
 	//case TW_MT_SLA_NACK	:
+	//
 		//break;
 	//case TW_MT_DATA_ACK	:
 		//break;
@@ -255,157 +327,3 @@ uint8_t sparad_data_16_B
 		//break;
 	//
 	//}
-//};
-
-int main(void)
-{
-		
-	DDRB = (1 << DDB0);
-	PORTB = (0 << PORTB0);
-	//_delay_ms(500);
-    //PORTB = 0x00;
-	//kanske behöver en array?
-
-	i2c_init();
-	volatile uint8_t x_l_data = 0;
-	volatile uint8_t x_h_data = 0;
-	volatile uint8_t y_l_data = 0;
-	volatile uint8_t y_h_data = 0;
-	volatile uint8_t z_l_data = 0;
-	volatile uint8_t z_h_data = 0;
-	//while (1)
-	//{
-		//accel_i2c_read_reg(test_reg_addr, saved_data);
-	//}
-	uint8_t set_ctrl_reg_1 = 0b01000111;
-	int i = 0;
-	i2c_write_reg(accel_addr, ctrl_reg_1, set_ctrl_reg_1);
-	while(i < 1000)
-	{
-		x_l_data = i2c_read_reg(accel_addr, acc_x_l_reg);
-		x_h_data = i2c_read_reg(accel_addr, acc_x_h_reg);
-		y_l_data = i2c_read_reg(accel_addr, acc_y_l_reg);
-		y_h_data = i2c_read_reg(accel_addr, acc_y_h_reg);
-		z_l_data = i2c_read_reg(accel_addr, acc_z_l_reg);
-		z_h_data = i2c_read_reg(accel_addr, acc_z_h_reg);
-		volatile short data_x = shift_data(x_l_data, x_h_data);
-		volatile short data_y = shift_data(y_l_data, y_h_data);
-		volatile short data_z = shift_data(z_l_data, z_h_data);
-		//led_blinker(1);
-		i = i + 1;
-	}
-	//DDRA = final_data;
-	//printf("Detta är värdet på sparad data%d\n", saved_data);	
-	
-	
-	//led_blinker(final_data);
-	led_blinker(1);
-	//if (final_data == 0x55)
-	//{
-		//led_blinker(50);
-	//}
-	//else
-	//{
-		//led_blinker(1);
-	//}
-	//return SUCCESS;
-	return 0;
-}
-
-
-
-
-//uint8_t i2c_transmit(uint8_t addr, uint8_t* data, uint16_t length)
-//{
-	////Osäker på om en startsignal ska skickas innan skrivning. Kan fungera som kontroll
-	//// av lyckad överföring eller liknande???
-	//if (i2c_start(addr | I2C_WRITE))
-	//{
-		//return 1;
-	//}
-	//
-	//for (uint16_t i = 0; i < length; i++)
-	//{
-		//if (i2c_write(data[i])) return 1;
-	//}
-	//
-	//i2c_stop();
-	//
-	//return 0;
-//}
-//
-//uint8_t i2c_receive(uint8_t addr, uint8_t* data, uint16_t length)
-//{
-	//if (i2c_start(addr | I2C_READ))
-	//{
-		//return 1;
-	//}
-	//
-	//for (uint16_t i = 0; i < (length-1); i++)
-	//{
-		//data[i] = i2c_ack_read();
-	//}
-	//
-	//data[(length-1)] = i2c_nack_read();
-	//
-	//i2c_stop();
-	//
-	//return 0;
-//}
-
-////kan vara fel att använda dessa. De utkommenterade funk. längst ned kan vara
-////lämpligare. problemet som uppstår är "data-pekaren". Antingen gör om till vanlig
-////int. eller använda utkommenterade funktioner typ.
-//uint8_t i2c_write_register(uint8_t device_addr, uint8_t register_addr, uint8_t* data, uint16_t length)
-//{
-	//if (i2c_start(device_addr | 0x00))
-	//{
-		//return 1;
-	//}
-	//
-	//i2c_write(register_addr);
-//
-	//for (uint16_t i = 0; i < length; i++)
-	//{
-		//if (i2c_write(data[i])) 
-		//{
-			//return 1;
-		//}
-	//}
-	//
-	//i2c_stop();
-//
-	//return 0;
-//}
-//
-///*
-//vad ska egentligen "data"-parametern vara? där kommer den lästa datan att hamna.
-//men om man tar TWDR som jag tror, så skriver man ju TWDR till TWDR. Man kanske ska
-//skriva till nån port vid test för att senare skriva till SPI kanalen för att skicka
-//vidare till Raspberry PI:n?
-//*/
-//uint8_t i2c_read_register(uint8_t device_addr, uint8_t register_addr, uint8_t* data, uint16_t length)
-//{
-	//if (i2c_start(device_addr))
-	//{
-		//return 1;
-	//}
-//
-	//i2c_write(register_addr);
-//
-	//if (i2c_start(device_addr | 0x01)) 
-	//{
-		//return 1;
-	//}
-//
-	//for (uint16_t i = 0; i < (length-1); i++)
-	//{
-		//data[i] = i2c_ack_read();
-	//}
-	//
-	//data[(length-1)] = i2c_nack_read();
-//
-	//i2c_stop();
-//
-	//return 0;
-//}
