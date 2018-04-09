@@ -237,7 +237,10 @@ En global variabel för sensoradresserna.
 ===========================================
 */	
 	
-	
+
+//Sker när data har tagits emot efter att "i2c_read_reg(accel_addr, acc_y_h_reg);" har körts i main-loop.
+//bör vara så enligt Oscar
+//oscar hade en avbrottsrutin beroende av timer...
 void ISR(TWI_vect)
 {
 
@@ -275,6 +278,7 @@ int main(void)
 	DDRB = (1 << DDB0);
 	PORTB = (0 << PORTB0);
 	i2c_init();
+	//troligen behövs en delay
 	while (1)
 	{
 		PORTB = 0x00;
