@@ -64,9 +64,9 @@ void led_blinker(uint8_t times)
 	for (uint8_t i = 0; i < times; i++)
 	{
 		PORTB |= (1<<0);
-		_delay_ms(500);
+		_delay_ms(400);
 		PORTB = (0<<0);
-		_delay_ms(500);
+		_delay_ms(400);
 	}
 }
 
@@ -80,18 +80,18 @@ void i2c_init(void)
 
 void i2c_start(void)
 {
-	TWCR = (1 << TWINT)|(1 << TWSTA)|(0 << TWSTO);
+	TWCR = (1 << TWINT)|(1 << TWSTA)|(0 << TWSTO)|(1 << TWEN)|(1 << TWIE);
 }
 
 void i2c_stop(void)
 {
-	TWCR = (1 << TWINT)|(0 << TWSTA)|(1 << TWSTO);
+	TWCR = (1 << TWINT)|(0 << TWSTA)|(1 << TWSTO)|(1 << TWEN)|(1 << TWIE);
 }
 
 void i2c_send_data(uint8_t data)
 {
 		TWDR = data;
-		TWCR = (1 << TWINT)|(0 << TWSTA)|(0 << TWSTO);
+		TWCR = (1 << TWINT)|(0 << TWSTA)|(0 << TWSTO)|(1 << TWEN)|(1 << TWIE);
 }
 
 short shift_data(uint8_t high, uint8_t low)
@@ -100,6 +100,56 @@ short shift_data(uint8_t high, uint8_t low)
 	uint16_t shifted = high * pow(2,8);
 	data = shifted + low;
 	return (short) data;
+}
+
+
+
+ISR(TWI_vect)
+{
+	uint8_t status = (TWSR & 0xF8);
+	switch (status)
+	{
+	case TW_START: //1
+		i2c_send_data(accel_addr + I2C_WRITE);
+		break;
+	case TW_REP_START: //2
+		i2c_send_data(accel_addr + I2C_READ);
+		break;
+		
+	case TW_MT_SLA_ACK: //3
+		i2c_send_data(register_addr); //tans_data = register vi vill läsa från
+		break;
+	case TW_MT_SLA_NACK: //4
+		led_blinker(15);
+		i2c_stop();
+		break;
+	case TW_MT_DATA_ACK: //5
+		if(write_to_slave)
+		{
+			if(n_o_writes == 0)
+			{
+				i2c_stop();
+			}
+			else
+			{
+				i2c_send_data(trans_data);	
+			}
+			n_o_writes = n_o_writes - 1; //placeringen är svår. vi minskade den innan vi hade använt den
+		}
+		else
+		{
+			i2c_start(); //repeated start	
+		}
+		
+		break;
+	case TW_MR_SLA_ACK: //6
+		TWCR = (1 << TWINT)|(0 << TWSTA)|(0 << TWSTO)|(0 << TWEA)|(1 << TWEN)|(1 << TWIE); //lade till TWEA för att vi vill få en ACK.
+		break;
+	case TW_MR_DATA_NACK: //7
+		rec_data = TWDR;
+		i2c_stop();
+		break;
+	}
 }
 
 
@@ -122,54 +172,6 @@ uint8_t i2c_read_reg(uint8_t reg_addr)
 	return rec_data;
 }
 
-ISR(TWI_vect)
-{
-	uint8_t status = (TWSR & 0xF8);
-	switch (status)
-	{
-	case TW_START: //1
-		i2c_send_data(accel_addr + I2C_WRITE);
-		//count = count + 1;
-		break;
-	case TW_REP_START: //2
-		i2c_send_data(accel_addr + I2C_READ);
-		
-	case TW_MT_SLA_ACK: //3
-		i2c_send_data(register_addr); //tans_data = register vi vill läsa från
-		break;
-	case TW_MT_SLA_NACK: //4
-		led_blinker(15);
-		i2c_stop();
-		break;
-	case TW_MT_DATA_ACK: //5
-		if(write_to_slave)
-		{
-			n_o_writes = n_o_writes - 1;
-			if(n_o_writes == 0)
-			{
-				i2c_stop();
-			}
-			else
-			{
-				i2c_send_data(trans_data);	
-			}
-		}
-		else
-		{
-			i2c_start(); //repeated start	
-		}
-		
-		break;
-	case TW_MR_SLA_ACK: //6
-		TWCR = (1 << TWINT)|(0 << TWSTA)|(0 << TWSTO)|(1 << TWEA); //lade till TWEA för att vi vill få en ACK.
-		break;
-	case TW_MR_DATA_NACK: //7
-		rec_data = TWDR;
-		i2c_stop();
-		break;
-	}
-}
-
 int main(void)
 {
 	DDRB = (1 << DDB0);
@@ -177,15 +179,20 @@ int main(void)
 	i2c_init();
 	sei();
 	uint8_t set_ctrl_reg_1 = 0b01000111;
-	i2c_write_reg(ctrl_reg_1, set_ctrl_reg_1, 1);
-	uint8_t out = i2c_read_reg(ctrl_reg_1);
-	if (out == set_ctrl_reg_1)
+	while(1)
 	{
-		led_blinker(5);
-	}
-	else
-	{
-		led_blinker(10);
+		i2c_write_reg(ctrl_reg_1, set_ctrl_reg_1, 1);
+		_delay_ms(100);
+		i2c_read_reg(ctrl_reg_1);
+		uint8_t out = rec_data;
+		if (out == set_ctrl_reg_1)
+		{
+			led_blinker(5);
+		}
+		else
+		{
+			led_blinker(10);
+		}
 	}
 	return 0;
 }

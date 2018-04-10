@@ -271,7 +271,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x292
+.text           0x00000000      0x2a0
  *(.vectors)
  .vectors       0x00000000       0x8c c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtm1284p.o
                 0x00000000                __vector_default
@@ -370,22 +370,22 @@ END GROUP
  .text.i2c_init
                 0x00000110       0x12 i2c_config.o
                 0x00000110                i2c_init
- .text.i2c_write_reg
-                0x00000122       0x1e i2c_config.o
-                0x00000122                i2c_write_reg
- .text.i2c_read_reg
-                0x00000140       0x14 i2c_config.o
-                0x00000140                i2c_read_reg
  .text.__vector_26
-                0x00000154      0x10e i2c_config.o
-                0x00000154                __vector_26
- .text.main     0x00000262       0x2c i2c_config.o
-                0x00000262                main
-                0x0000028e                . = ALIGN (0x2)
+                0x00000122      0x110 i2c_config.o
+                0x00000122                __vector_26
+ .text.i2c_write_reg
+                0x00000232       0x1e i2c_config.o
+                0x00000232                i2c_write_reg
+ .text.i2c_read_reg
+                0x00000250       0x14 i2c_config.o
+                0x00000250                i2c_read_reg
+ .text.main     0x00000264       0x38 i2c_config.o
+                0x00000264                main
+                0x0000029c                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x0000028e        0x0 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr51\libgcc.a(_exit.o)
-                0x0000028e                _exit
-                0x0000028e                exit
+ .fini9         0x0000029c        0x0 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr51\libgcc.a(_exit.o)
+                0x0000029c                _exit
+                0x0000029c                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -404,11 +404,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x0000028e        0x4 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr51\libgcc.a(_exit.o)
+ .fini0         0x0000029c        0x4 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr51\libgcc.a(_exit.o)
  *(.fini0)
-                0x00000292                _etext = .
+                0x000002a0                _etext = .
 
-.data           0x00800100        0x2 load address 0x00000292
+.data           0x00800100        0x2 load address 0x000002a0
                 0x00800100                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
@@ -436,8 +436,8 @@ END GROUP
                 0x00800105                rec_data
                 0x00800106                trans_data
                 0x00800107                PROVIDE (__bss_end, .)
-                0x00000292                __data_load_start = LOADADDR (.data)
-                0x00000294                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x000002a0                __data_load_start = LOADADDR (.data)
+                0x000002a2                __data_load_end = (__data_load_start + SIZEOF (.data))
 
 .noinit         0x00800107        0x0
                 0x00800107                PROVIDE (__noinit_start, .)
@@ -511,17 +511,17 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000      0x52c
+.debug_info     0x00000000      0x575
  *(.debug_info .gnu.linkonce.wi.*)
- .debug_info    0x00000000      0x52c i2c_config.o
+ .debug_info    0x00000000      0x575 i2c_config.o
 
-.debug_abbrev   0x00000000      0x243
+.debug_abbrev   0x00000000      0x24e
  *(.debug_abbrev)
- .debug_abbrev  0x00000000      0x243 i2c_config.o
+ .debug_abbrev  0x00000000      0x24e i2c_config.o
 
-.debug_line     0x00000000      0x356
+.debug_line     0x00000000      0x364
  *(.debug_line .debug_line.* .debug_line_end)
- .debug_line    0x00000000      0x356 i2c_config.o
+ .debug_line    0x00000000      0x364 i2c_config.o
 
 .debug_frame    0x00000000      0x104
  *(.debug_frame)
@@ -532,9 +532,9 @@ END GROUP
  .debug_str     0x00000000      0x26c i2c_config.o
                                 0x2aa (size before relaxing)
 
-.debug_loc      0x00000000      0x471
+.debug_loc      0x00000000      0x47c
  *(.debug_loc)
- .debug_loc     0x00000000      0x471 i2c_config.o
+ .debug_loc     0x00000000      0x47c i2c_config.o
 
 .debug_macinfo
  *(.debug_macinfo)
