@@ -1,0 +1,93 @@
+/*
+hur man "Castar" till ny datatyp ex: av Oscar!
+uint8_t sparad_data_16_B
+(float) sparad_data_16_B
+
+*/
+
+
+	/*
+	Behöver vi maska bort prescale eller sker det redan i i2c_start?
+	TWSR_no_prescale = ()
+	==============================================================
+	Hur är ordningen?
+	Sätts TWSR först för att senare köra i2c_start t.ex.?
+	eller måste i2c_start köras först för att TWSR 
+	Verkar vara så att TWINT sätts efter att ett kommando på I2C-bussen har skickats
+	
+	Alltså är frågan:
+	Hur går det hela tillväga? Hur hamnar vi i ISR()?
+	Är det så att vi sätter upp vad som ska hända efter/vid varje specifik läge för
+	statusregistret TWSR? har vi inte redan gjort det?
+	
+	Kanske vi ska ersätta/sätta in ovanstående funktioner med/i följande "switch-case"?
+	
+	Blir "statement":en i vaje case vad vi vill ska hända EFTER att TWSR är case? 
+	Svar: JA!
+	================================================================
+	
+	Jag tror/tolkar det som om att följande avbrottsrutin ersätter funktionerna ovan!!
+	
+	
+	*/
+	
+/*
+===========================================
+Hur gör vi när vi har flera sensorer?!
+En global variabel för sensoradresserna.
+===========================================
+*/	
+	
+
+//Sker när data har tagits emot efter att "i2c_read_reg(accel_addr, acc_y_h_reg);" har körts i main-loop.
+//bör vara så enligt Oscar
+//oscar hade en avbrottsrutin beroende av timer...
+
+
+
+
+
+	
+////TWEN ska alltid sättas till 1 right?
+	//switch ((TWSR & 0xF8))
+	//{
+	//case TW_START	:
+	///*
+	//TROR DETTA SKA VARA MED I i2c_init() ELLER LIKNANDE.
+	//DET SKA I ALLA FALL SKICKAS INNAN MAN HAR KOMMIT IN HÄR!
+//
+		//TWCR = 0; //reset I2C control register
+		//TWCR = (1 << TWINT)|(1 << TWSTA)|(1 << TWEN);
+	//*/
+	//TWDR =(accel_addr + I2C_WRITE);
+	//TWCR = (1 << TWINT)|(1 << TWEN); //start transmission of address
+		//break;
+	//case TW_REP_START	:
+	///*
+	//här läser man eller skriver till slaven. Vet inte hur man ska 
+	//välja mellan de två fallen. Tror inte vi behöver ha write här
+	//i alla fall
+	//*/
+	//TWDR = (accel_addr + I2C_READ);
+	//TWCR = (1 << TWINT)|(1 << TWEN); //start transmission of address
+	//case TW_MT_SLA_ACK	:
+		//TWDR = writing_data;
+		//TWCR = (1 << TWINT)|(1 << TWEN);
+		//break;
+	//case TW_MT_SLA_NACK	:
+	//
+		//break;
+	//case TW_MT_DATA_ACK	:
+		//break;
+	//case TW_MT_DATA_NACK:
+		//break;
+	//case TW_MR_SLA_ACK	:
+		//break;
+	//case TW_MR_SLA_NACK	:
+		//break;
+	//case TW_MR_DATA_ACK	:
+		//break;
+	//case TW_MR_DATA_NACK:
+		//break;
+	//
+	//}

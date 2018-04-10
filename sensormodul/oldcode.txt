@@ -1,0 +1,116 @@
+uint8_t i2c_write(uint8_t data)
+{
+	TWDR = data;
+	TWCR = (1 << TWINT)|(1 << TWEN); //start transmission of data
+	while(!(TWCR & (1 << TWINT)));  //wait for the transmission to finish
+	
+	if((TWSR & 0xF8) != TW_MT_DATA_ACK) //Check for data-transmit-acknowledge 
+	{
+		return ERROR;
+	}
+	return SUCCESS;
+}
+
+uint8_t i2c_ack_read(void)
+{
+	TWCR = (1 << TWINT)|(1 << TWEN)|(1 << TWEA);
+	while(!(TWCR & (1 << TWINT)));
+	return TWDR;
+}
+
+uint8_t i2c_nack_read(void)
+{
+	TWCR = (1 << TWINT)|(1 << TWEN);
+	while(!(TWCR & (1 << TWINT)));
+	return TWDR;
+}
+
+//uint8_t i2c_get_status(void)
+//{
+//uint8_t status;
+//status = (TWSR & 0xF8);
+//return status;
+//}
+
+//Blink LED "times" number of times
+void led_blinker(uint8_t times)
+{
+	for (uint8_t i = 0; i < times; i++)
+	{
+		PORTB |= (1<<0);
+		_delay_ms(10);
+		PORTB = (0<<0);
+		_delay_ms(10);
+	}
+}
+
+
+//The following functions are specific to each unit on the I2C-bus
+//Accelerometer - LSM303DLHC
+void i2c_write_reg(uint8_t dev_addr, uint8_t reg_addr, uint8_t data)
+{
+	i2c_start(dev_addr + I2C_WRITE);
+	i2c_write(reg_addr);
+	i2c_write(data);
+	i2c_stop();
+}
+
+//Data är där data sparas
+short i2c_read_reg(uint8_t dev_addr, uint8_t reg_addr)
+{
+	i2c_start(dev_addr + I2C_WRITE);
+	i2c_write(reg_addr);
+	i2c_repeated_start(dev_addr + I2C_READ);
+	//osäker på om man ska ha och hur data = i2c_nack_read() fungerar...
+	uint8_t data = i2c_ack_read();
+	i2c_stop();	
+	return data;
+}
+
+/*
+OBS! Måste skapa en array-variabel för att spara undan datan. för att sedan tillkalla
+funktionen med. Kom ihåg längd på arrayen. Finns dynamisk variant. MALLOC google är
+din vän.
+
+KOLLA UPP OM MAN MÅSTE SÄTTA EN VISS BIT I REGISTRET FÖR ATT UTÖKA DET!!!!
+*/
+void i2c_mult_read_reg(uint8_t dev_addr, uint8_t reg_addr, uint8_t* data, uint16_t length)
+{
+	i2c_start(dev_addr + I2C_WRITE);
+	i2c_write(reg_addr);
+	i2c_repeated_start(dev_addr + I2C_READ);
+	
+	for (uint16_t i = 0; i < (length -1); i++)
+	{
+
+		data[i] = i2c_ack_read();
+	}
+	data[(length - 1)] = i2c_nack_read();
+	
+	i2c_stop();
+}
+
+uint8_t i2c_start(uint8_t addr) //Takes the slave address and write/read bit. SAD + W/R.
+{
+	TWCR = 0; //reset I2C control register
+	TWCR = (1 << TWINT)|(1 << TWSTA)|(1 << TWEN);
+	while(!(TWCR & (1 << TWINT)));
+	
+	if((TWSR & 0xF8) != TW_START)
+	{
+		return ERROR;
+	}
+	TWDR = addr; //load TWDR with slave address
+	TWCR = (1 << TWINT)|(1 << TWEN); //start transmission of address
+	
+	while(!(TWCR & (1 << TWINT))); //Wait for the transmission to finish
+	uint8_t twst = TW_STATUS & 0xF8;
+	
+	if((twst != TW_MT_SLA_ACK) && (twst != TW_MR_SLA_ACK)) //check for acknowledge from slave
+	{
+		return ERROR;
+	} 
+	return SUCCESS;
+}
+
+
