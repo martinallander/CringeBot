@@ -40,8 +40,13 @@
 //Kanske ska vara uint8_t
 //#define writing_data
 
+/*========================================================
+					Sensor addresses
+=========================================================*/
 #define accel_addr 0x32
-#define test_reg_addr 0x00
+/*========================================================
+						Registers
+=========================================================*/
 #define ctrl_reg_1 0x20
 #define acc_x_l_reg 0x28
 #define acc_x_h_reg 0x29
@@ -50,6 +55,10 @@
 #define acc_z_l_reg 0x2C
 #define acc_z_h_reg 0x2D
 
+/*========================================================
+		Global variable and storage variable
+=========================================================*/
+
 volatile bool i2c_done = 1;
 volatile bool write_to_slave = 1;
 volatile uint8_t register_addr;
@@ -57,20 +66,14 @@ volatile uint8_t trans_data;
 volatile uint8_t rec_data;
 volatile int n_o_writes = 0;
 
-#define i2c_mode
+//#define i2c_mode
 //volatile unsigned char i2c_addr;
 
-void led_blinker(uint8_t times)
-{
-	_delay_ms(500);
-	for (uint8_t i = 0; i < times; i++)
-	{
-		PORTB |= (1<<0);
-		_delay_ms(500);
-		PORTB = (0<<0);
-		_delay_ms(500);
-	}
-}
+/*========================================================
+				I2C Configuration
+=========================================================*/
+
+
 
 //Initializer of i2c
 void i2c_init(void)
@@ -98,13 +101,7 @@ void i2c_send_data(uint8_t data)
 		TWCR = (1 << TWINT)|(0 << TWSTA)|(0 << TWSTO)|(1 << TWEN)|(1 << TWIE);
 }
 
-short shift_data(int8_t high, uint8_t low)
-{
-	int16_t data = 0;
-	int16_t shifted = high << 8;
-	data = shifted + low;
-	return (short) data;
-}
+
 
 /*===========================================================================================
 Interrupt for I2C
@@ -169,6 +166,33 @@ ISR(TWI_vect)
 }
 
 
+/*========================================================
+			Data handling functions and others
+=========================================================*/
+
+void led_blinker(uint8_t times)
+{
+	_delay_ms(500);
+	for (uint8_t i = 0; i < times; i++)
+	{
+		PORTB |= (1<<0);
+		_delay_ms(500);
+		PORTB = (0<<0);
+		_delay_ms(500);
+	}
+}
+
+
+//adafruit skiftar 4 till höger i slutet... why??
+
+int16_t shift_data(int8_t high, int8_t low) //high och low är båda 2-komlement
+{
+	int16_t data = 0;
+	int16_t shifted = (uint16_t)high << 8;
+	data = (shifted | (uint16_t)low);
+	return data;
+}
+
 
 void i2c_write_reg(uint8_t reg_addr, uint8_t data, int n)
 {
@@ -190,21 +214,29 @@ uint8_t i2c_read_reg(uint8_t reg_addr)
 	return rec_data;
 }
 
+
+
 int main(void)
 {
-	volatile uint8_t out;
-	volatile uint8_t x_l_value;
+	volatile int8_t x_l_value;
 	volatile int8_t x_h_value;
-	volatile uint8_t y_l_value;
+	volatile int8_t y_l_value;
 	volatile int8_t y_h_value;
-	volatile uint8_t z_l_value;
+	volatile int8_t z_l_value;
 	volatile int8_t z_h_value;
 	DDRB = (1 << DDB0);
 	PORTB = (0 << PORTB0);
 	i2c_init();
 	sei();
-	uint8_t set_ctrl_reg_1 = 0b01000111;
-	i2c_write_reg(ctrl_reg_1, set_ctrl_reg_1, 1);
+	//samplerate = 50Hz
+	uint8_t set_ctrl_reg_1_50 = 0b01000111;
+	//samplerate = 100Hz
+	uint8_t set_ctrl_reg_1_100 = 0b01010111;
+	/*-----------------------------------------------------------------
+	We maybe need to look into CTRL_REG4_A(0x23) to adjust the sensitivity
+	CTRL_REG2_A(0x21) configurate a HP-filter
+	-----------------------------------------------------------------*/
+	i2c_write_reg(ctrl_reg_1, set_ctrl_reg_1_100, 1);
 	while(1)
 	{
 		_delay_ms(10);
@@ -215,18 +247,12 @@ int main(void)
 		y_h_value = i2c_read_reg(acc_y_h_reg);
 		z_l_value = i2c_read_reg(acc_z_l_reg);
 		z_h_value = i2c_read_reg(acc_z_h_reg);
-
-		volatile short data_x = shift_data(x_h_value, x_l_value);
-		volatile short data_y = shift_data(y_h_value, y_l_value);
-		volatile short data_z = shift_data(z_h_value, z_l_value);
-		//if (out == set_ctrl_reg_1)
-		//{
-			//led_blinker(5);
-		//}
-		//else
-		//{
-		//led_blinker(3);
-		//}
+		_delay_ms(10);
+		//Möjligtvis lägga in detta i avbrottsrutinen?
+		volatile int16_t data_x = shift_data(x_h_value, x_l_value);
+		volatile int16_t data_y = shift_data(y_h_value, y_l_value);
+		volatile int16_t data_z = shift_data(z_h_value, z_l_value);
+		
 	}
 	return 0;
 }
