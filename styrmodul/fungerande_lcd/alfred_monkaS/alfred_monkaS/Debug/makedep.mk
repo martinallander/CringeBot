@@ -4,5 +4,3 @@
 
 alfred_monkaS.c
 
-styrmodul_halv_duplex.c
-

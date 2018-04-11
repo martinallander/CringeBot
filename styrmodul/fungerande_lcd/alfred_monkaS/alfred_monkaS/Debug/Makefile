@@ -37,8 +37,7 @@ SUBDIRS :=
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
-../alfred_monkaS.c \
-../styrmodul_halv_duplex.c
+../alfred_monkaS.c
 
 
 PREPROCESSING_SRCS += 
@@ -48,24 +47,20 @@ ASM_SRCS +=
 
 
 OBJS +=  \
-alfred_monkaS.o \
-styrmodul_halv_duplex.o
+alfred_monkaS.o
 
 OBJS_AS_ARGS +=  \
-alfred_monkaS.o \
-styrmodul_halv_duplex.o
+alfred_monkaS.o
 
 C_DEPS +=  \
-alfred_monkaS.d \
-styrmodul_halv_duplex.d
+alfred_monkaS.d
 
 C_DEPS_AS_ARGS +=  \
-alfred_monkaS.d \
-styrmodul_halv_duplex.d
+alfred_monkaS.d
 
-OUTPUT_FILE_PATH +=styrmodul_halv_duplex.elf
+OUTPUT_FILE_PATH +=alfred_monkaS.elf
 
-OUTPUT_FILE_PATH_AS_ARGS +=styrmodul_halv_duplex.elf
+OUTPUT_FILE_PATH_AS_ARGS +=alfred_monkaS.elf
 
 ADDITIONAL_DEPENDENCIES:=
 
@@ -77,8 +72,6 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
-
-
 
 
 
@@ -114,13 +107,13 @@ all: $(OUTPUT_FILE_PATH) $(ADDITIONAL_DEPENDENCIES)
 $(OUTPUT_FILE_PATH): $(OBJS) $(USER_OBJS) $(OUTPUT_FILE_DEP) $(LIB_DEP) $(LINKER_SCRIPT_DEP)
 	@echo Building target: $@
 	@echo Invoking: AVR/GNU Linker : 4.8.1
-	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE) -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -Wl,-Map="styrmodul_halv_duplex.map" -Wl,--start-group -Wl,-lm  -Wl,--end-group -Wl,--gc-sections -mrelax -mmcu=atmega1284p  
+	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE) -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -Wl,-Map="alfred_monkaS.map" -Wl,--start-group -Wl,-lm  -Wl,--end-group -Wl,--gc-sections -mrelax -mmcu=atmega1284p  
 	@echo Finished building target: $@
-	"C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-objcopy.exe" -O ihex -R .eeprom -R .fuse -R .lock -R .signature -R .user_signatures  "styrmodul_halv_duplex.elf" "styrmodul_halv_duplex.hex"
-	"C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-objcopy.exe" -j .eeprom  --set-section-flags=.eeprom=alloc,load --change-section-lma .eeprom=0  --no-change-warnings -O ihex "styrmodul_halv_duplex.elf" "styrmodul_halv_duplex.eep" || exit 0
-	"C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-objdump.exe" -h -S "styrmodul_halv_duplex.elf" > "styrmodul_halv_duplex.lss"
-	"C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-objcopy.exe" -O srec -R .eeprom -R .fuse -R .lock -R .signature -R .user_signatures "styrmodul_halv_duplex.elf" "styrmodul_halv_duplex.srec"
-	"C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-size.exe" "styrmodul_halv_duplex.elf"
+	"C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-objcopy.exe" -O ihex -R .eeprom -R .fuse -R .lock -R .signature -R .user_signatures  "alfred_monkaS.elf" "alfred_monkaS.hex"
+	"C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-objcopy.exe" -j .eeprom  --set-section-flags=.eeprom=alloc,load --change-section-lma .eeprom=0  --no-change-warnings -O ihex "alfred_monkaS.elf" "alfred_monkaS.eep" || exit 0
+	"C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-objdump.exe" -h -S "alfred_monkaS.elf" > "alfred_monkaS.lss"
+	"C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-objcopy.exe" -O srec -R .eeprom -R .fuse -R .lock -R .signature -R .user_signatures "alfred_monkaS.elf" "alfred_monkaS.srec"
+	"C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-size.exe" "alfred_monkaS.elf"
 	
 	
 
@@ -132,5 +125,5 @@ $(OUTPUT_FILE_PATH): $(OBJS) $(USER_OBJS) $(OUTPUT_FILE_DEP) $(LIB_DEP) $(LINKER
 clean:
 	-$(RM) $(OBJS_AS_ARGS) $(EXECUTABLES)  
 	-$(RM) $(C_DEPS_AS_ARGS)   
-	rm -rf "styrmodul_halv_duplex.elf" "styrmodul_halv_duplex.a" "styrmodul_halv_duplex.hex" "styrmodul_halv_duplex.lss" "styrmodul_halv_duplex.eep" "styrmodul_halv_duplex.map" "styrmodul_halv_duplex.srec" "styrmodul_halv_duplex.usersignatures"
+	rm -rf "alfred_monkaS.elf" "alfred_monkaS.a" "alfred_monkaS.hex" "alfred_monkaS.lss" "alfred_monkaS.eep" "alfred_monkaS.map" "alfred_monkaS.srec" "alfred_monkaS.usersignatures"
 	
