@@ -98,10 +98,10 @@ void i2c_send_data(uint8_t data)
 		TWCR = (1 << TWINT)|(0 << TWSTA)|(0 << TWSTO)|(1 << TWEN)|(1 << TWIE);
 }
 
-short shift_data(uint8_t high, uint8_t low)
+short shift_data(int8_t high, uint8_t low)
 {
-	uint16_t data = 0;
-	uint16_t shifted = high * pow(2,8);
+	int16_t data = 0;
+	int16_t shifted = high << 8;
 	data = shifted + low;
 	return (short) data;
 }
@@ -194,11 +194,11 @@ int main(void)
 {
 	volatile uint8_t out;
 	volatile uint8_t x_l_value;
-	volatile uint8_t x_h_value;
+	volatile int8_t x_h_value;
 	volatile uint8_t y_l_value;
-	volatile uint8_t y_h_value;
+	volatile int8_t y_h_value;
 	volatile uint8_t z_l_value;
-	volatile uint8_t z_h_value;
+	volatile int8_t z_h_value;
 	DDRB = (1 << DDB0);
 	PORTB = (0 << PORTB0);
 	i2c_init();
@@ -210,21 +210,15 @@ int main(void)
 		_delay_ms(10);
 	//	i2c_read_reg(ctrl_reg_1);
 		x_l_value = i2c_read_reg(acc_x_l_reg);
-		//x_l_value = rec_data;
-		//out = rec_data;
 		x_h_value = i2c_read_reg(acc_x_h_reg);
-	//	x_h_value = rec_data;
-		
-		/*
-		i2c_read_reg(acc_y_l_reg);
-		y_l_value = rec_data;
-		i2c_read_reg(acc_y_h_reg);
-		y_h_value = rec_data;
-		i2c_read_reg(acc_z_l_reg);
-		z_l_value = rec_data;
-		i2c_read_reg(acc_z_h_reg);
-		z_h_value = rec_data;
-		*/
+		y_l_value = i2c_read_reg(acc_y_l_reg);
+		y_h_value = i2c_read_reg(acc_y_h_reg);
+		z_l_value = i2c_read_reg(acc_z_l_reg);
+		z_h_value = i2c_read_reg(acc_z_h_reg);
+
+		volatile short data_x = shift_data(x_h_value, x_l_value);
+		volatile short data_y = shift_data(y_h_value, y_l_value);
+		volatile short data_z = shift_data(z_h_value, z_l_value);
 		//if (out == set_ctrl_reg_1)
 		//{
 			//led_blinker(5);
