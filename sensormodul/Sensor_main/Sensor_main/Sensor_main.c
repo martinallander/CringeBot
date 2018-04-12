@@ -13,6 +13,8 @@
 #include <stdio.h>
 #include "i2c.c"
 #include "definitions.h"
+#include "FIFO_Queue.c"
+#include "sensor_data.c"
 
 void led_blinker(uint8_t times)
 {
@@ -36,6 +38,8 @@ int16_t shift_data(int8_t high, int8_t low) //high och low är båda 2-komlement
 
 int main(void)
 {
+	/*
+	led_blinker(10);
    	volatile int8_t x_l_value;
 	volatile int8_t x_h_value;
 	volatile int8_t y_l_value;
@@ -49,6 +53,7 @@ int main(void)
 	i2c_write_reg(accel_addr, ctrl_reg_1, set_ctrl_reg_1_50, 1);
 	while(1)
 	{
+		//led_blinker(1);
 		_delay_ms(10);
 		x_l_value = i2c_read_reg(accel_addr, acc_x_l_reg);
 		x_h_value = i2c_read_reg(accel_addr, acc_x_h_reg);
@@ -61,6 +66,7 @@ int main(void)
 		volatile int16_t data_y = shift_data(y_h_value, y_l_value);
 		volatile int16_t data_z = shift_data(z_h_value, z_l_value);
 		
-	}
+	}*/
+	FIFO_test();
 	return 0;
 }
