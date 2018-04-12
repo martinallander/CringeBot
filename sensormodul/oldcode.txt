@@ -113,4 +113,23 @@ uint8_t i2c_start(uint8_t addr) //Takes the slave address and write/read bit. SA
 	return SUCCESS;
 }
 
+void stupid_shift(void)
+{
+	int8_t h = 0xAA;
+	uint8_t l = 0x55;
+	//int16_t shift = h << 8;
+	//int16_t data = shift + l;
+	int16_t data = h + l;	
+
+	if(data == 0xFFFF)
+	{
+		led_blinker(5);
+	}
+	else
+	{
+		led_blinker(2);
+	}
+}
+
+
 

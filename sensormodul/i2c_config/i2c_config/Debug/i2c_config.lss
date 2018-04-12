@@ -3,29 +3,29 @@ i2c_config.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000002  00800100  000003e0  00000474  2**0
+  0 .data         00000002  00800100  00000398  0000042c  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         000003e0  00000000  00000000  00000094  2**1
+  1 .text         00000398  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .bss          00000005  00800102  00800102  00000476  2**0
+  2 .bss          00000005  00800102  00800102  0000042e  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  00000476  2**0
+  3 .comment      00000030  00000000  00000000  0000042e  2**0
                   CONTENTS, READONLY
-  4 .debug_aranges 00000068  00000000  00000000  000004a6  2**0
+  4 .debug_aranges 00000068  00000000  00000000  0000045e  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   0000077c  00000000  00000000  0000050e  2**0
+  5 .debug_info   00000712  00000000  00000000  000004c6  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 0000027b  00000000  00000000  00000c8a  2**0
+  6 .debug_abbrev 000002a4  00000000  00000000  00000bd8  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00000445  00000000  00000000  00000f05  2**0
+  7 .debug_line   00000407  00000000  00000000  00000e7c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  0000010c  00000000  00000000  0000134c  2**2
+  8 .debug_frame  0000010c  00000000  00000000  00001284  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    000002c9  00000000  00000000  00001458  2**0
+  9 .debug_str    000002e4  00000000  00000000  00001390  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    00000560  00000000  00000000  00001721  2**0
+ 10 .debug_loc    0000046a  00000000  00000000  00001674  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000058  00000000  00000000  00001c81  2**0
+ 11 .debug_ranges 00000058  00000000  00000000  00001ade  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -195,7 +195,7 @@ Disassembly of section .text:
  13a:	11 e0       	ldi	r17, 0x01	; 1
  13c:	a0 e0       	ldi	r26, 0x00	; 0
  13e:	b1 e0       	ldi	r27, 0x01	; 1
- 140:	e0 ee       	ldi	r30, 0xE0	; 224
+ 140:	e8 e9       	ldi	r30, 0x98	; 152
  142:	f3 e0       	ldi	r31, 0x03	; 3
  144:	00 e0       	ldi	r16, 0x00	; 0
  146:	0b bf       	out	0x3b, r16	; 59
@@ -220,17 +220,17 @@ Disassembly of section .text:
  160:	b2 07       	cpc	r27, r18
  162:	e1 f7       	brne	.-8      	; 0x15c <.do_clear_bss_loop>
  164:	d8 d0       	rcall	.+432    	; 0x316 <main>
- 166:	3a c1       	rjmp	.+628    	; 0x3dc <_exit>
+ 166:	16 c1       	rjmp	.+556    	; 0x394 <_exit>
 
 00000168 <__bad_interrupt>:
  168:	4b cf       	rjmp	.-362    	; 0x0 <__vectors>
 
 0000016a <i2c_init>:
 {
-	int16_t data = 0;
-	int16_t shifted = (uint16_t)high << 8;
-	data = (shifted | (uint16_t)low);
-	return data;
+	int16_t shifted_data = 0;
+	uint16_t shifted = (uint16_t)high << 8;
+	shifted_data = (shifted | (uint16_t)low);
+	return shifted_data;
 }
  16a:	10 92 b9 00 	sts	0x00B9, r1
  16e:	8c e0       	ldi	r24, 0x0C	; 12
@@ -321,7 +321,7 @@ Disassembly of section .text:
  216:	4f c0       	rjmp	.+158    	; 0x2b6 <__vector_26+0xd8>
  218:	ea 5b       	subi	r30, 0xBA	; 186
  21a:	ff 4f       	sbci	r31, 0xFF	; 255
- 21c:	d9 c0       	rjmp	.+434    	; 0x3d0 <__tablejump2__>
+ 21c:	b5 c0       	rjmp	.+362    	; 0x388 <__tablejump2__>
  21e:	82 e3       	ldi	r24, 0x32	; 50
  220:	80 93 bb 00 	sts	0x00BB, r24
  224:	85 e8       	ldi	r24, 0x85	; 133
@@ -443,24 +443,23 @@ uint8_t i2c_read_reg(uint8_t reg_addr)
 00000316 <main>:
 
 
-
 int main(void)
 {
  316:	cf 93       	push	r28
  318:	df 93       	push	r29
  31a:	cd b7       	in	r28, 0x3d	; 61
  31c:	de b7       	in	r29, 0x3e	; 62
- 31e:	2c 97       	sbiw	r28, 0x0c	; 12
+ 31e:	28 97       	sbiw	r28, 0x08	; 8
  320:	0f b6       	in	r0, 0x3f	; 63
  322:	f8 94       	cli
  324:	de bf       	out	0x3e, r29	; 62
  326:	0f be       	out	0x3f, r0	; 63
  328:	cd bf       	out	0x3d, r28	; 61
-	volatile int8_t x_h_value;
 	volatile int8_t y_l_value;
 	volatile int8_t y_h_value;
 	volatile int8_t z_l_value;
 	volatile int8_t z_h_value;
+	
 	DDRB = (1 << DDB0);
  32a:	81 e0       	ldi	r24, 0x01	; 1
  32c:	84 b9       	out	0x04, r24	; 4
@@ -475,10 +474,10 @@ int main(void)
 	We maybe need to look into CTRL_REG4_A(0x23) to adjust the sensitivity
 	CTRL_REG2_A(0x21) configurate a HP-filter
 	-----------------------------------------------------------------*/
-	i2c_write_reg(ctrl_reg_1, set_ctrl_reg_1_100, 1);
+	i2c_write_reg(ctrl_reg_1, set_ctrl_reg_1_10, 1);
  334:	41 e0       	ldi	r20, 0x01	; 1
  336:	50 e0       	ldi	r21, 0x00	; 0
- 338:	67 e5       	ldi	r22, 0x57	; 87
+ 338:	67 e2       	ldi	r22, 0x27	; 39
  33a:	80 e2       	ldi	r24, 0x20	; 32
  33c:	cf df       	rcall	.-98     	; 0x2dc <i2c_write_reg>
 	#else
@@ -493,8 +492,9 @@ int main(void)
  344:	f1 f7       	brne	.-4      	; 0x342 <main+0x2c>
  346:	00 c0       	rjmp	.+0      	; 0x348 <main+0x32>
  348:	00 00       	nop
-	while(1)
-	{
+
+		
+		
 		_delay_ms(10);
 	//	i2c_read_reg(ctrl_reg_1);
 		x_l_value = i2c_read_reg(acc_x_l_reg);
@@ -513,120 +513,70 @@ int main(void)
  35c:	8b e2       	ldi	r24, 0x2B	; 43
  35e:	cf df       	rcall	.-98     	; 0x2fe <i2c_read_reg>
  360:	8c 83       	std	Y+4, r24	; 0x04
-		z_l_value = i2c_read_reg(acc_z_l_reg);
- 362:	8c e2       	ldi	r24, 0x2C	; 44
- 364:	cc df       	rcall	.-104    	; 0x2fe <i2c_read_reg>
- 366:	8d 83       	std	Y+5, r24	; 0x05
-		z_h_value = i2c_read_reg(acc_z_h_reg);
- 368:	8d e2       	ldi	r24, 0x2D	; 45
- 36a:	c9 df       	rcall	.-110    	; 0x2fe <i2c_read_reg>
- 36c:	8e 83       	std	Y+6, r24	; 0x06
- 36e:	83 ec       	ldi	r24, 0xC3	; 195
- 370:	99 e0       	ldi	r25, 0x09	; 9
- 372:	01 97       	sbiw	r24, 0x01	; 1
- 374:	f1 f7       	brne	.-4      	; 0x372 <main+0x5c>
- 376:	00 c0       	rjmp	.+0      	; 0x378 <main+0x62>
- 378:	00 00       	nop
+ 362:	83 ec       	ldi	r24, 0xC3	; 195
+ 364:	99 e0       	ldi	r25, 0x09	; 9
+ 366:	01 97       	sbiw	r24, 0x01	; 1
+ 368:	f1 f7       	brne	.-4      	; 0x366 <main+0x50>
+ 36a:	00 c0       	rjmp	.+0      	; 0x36c <main+0x56>
+ 36c:	00 00       	nop
+		//z_l_value = i2c_read_reg(acc_z_l_reg);
+		//z_h_value = i2c_read_reg(acc_z_h_reg);
 		_delay_ms(10);
-		//Möjligtvis lägga in detta i avbrottsrutinen
+		//Möjligtvis lägga in detta i avbrottsrutinen?
 		volatile int16_t data_x = shift_data(x_h_value, x_l_value);
- 37a:	29 81       	ldd	r18, Y+1	; 0x01
- 37c:	8a 81       	ldd	r24, Y+2	; 0x02
+ 36e:	89 81       	ldd	r24, Y+1	; 0x01
+ 370:	2a 81       	ldd	r18, Y+2	; 0x02
 //adafruit skiftar 4 till höger i slutet... why??
 
-int16_t shift_data(int8_t high, int8_t low) //high och low är båda 2-komlement
+int16_t shift_data(uint8_t high, uint8_t low) //high och low är båda 2-komlement
 {
-	int16_t data = 0;
-	int16_t shifted = (uint16_t)high << 8;
- 37e:	99 27       	eor	r25, r25
- 380:	87 fd       	sbrc	r24, 7
- 382:	90 95       	com	r25
- 384:	98 2f       	mov	r25, r24
- 386:	88 27       	eor	r24, r24
-	data = (shifted | (uint16_t)low);
- 388:	33 27       	eor	r19, r19
- 38a:	27 fd       	sbrc	r18, 7
- 38c:	30 95       	com	r19
- 38e:	82 2b       	or	r24, r18
- 390:	93 2b       	or	r25, r19
+	int16_t shifted_data = 0;
+	uint16_t shifted = (uint16_t)high << 8;
+ 372:	90 e0       	ldi	r25, 0x00	; 0
+	shifted_data = (shifted | (uint16_t)low);
+ 374:	92 2b       	or	r25, r18
 		y_h_value = i2c_read_reg(acc_y_h_reg);
-		z_l_value = i2c_read_reg(acc_z_l_reg);
-		z_h_value = i2c_read_reg(acc_z_h_reg);
+		//z_l_value = i2c_read_reg(acc_z_l_reg);
+		//z_h_value = i2c_read_reg(acc_z_h_reg);
 		_delay_ms(10);
-		//Möjligtvis lägga in detta i avbrottsrutinen
+		//Möjligtvis lägga in detta i avbrottsrutinen?
 		volatile int16_t data_x = shift_data(x_h_value, x_l_value);
- 392:	9c 87       	std	Y+12, r25	; 0x0c
- 394:	8b 87       	std	Y+11, r24	; 0x0b
+ 376:	98 87       	std	Y+8, r25	; 0x08
+ 378:	8f 83       	std	Y+7, r24	; 0x07
 		volatile int16_t data_y = shift_data(y_h_value, y_l_value);
- 396:	2b 81       	ldd	r18, Y+3	; 0x03
- 398:	8c 81       	ldd	r24, Y+4	; 0x04
+ 37a:	8b 81       	ldd	r24, Y+3	; 0x03
+ 37c:	2c 81       	ldd	r18, Y+4	; 0x04
 //adafruit skiftar 4 till höger i slutet... why??
 
-int16_t shift_data(int8_t high, int8_t low) //high och low är båda 2-komlement
+int16_t shift_data(uint8_t high, uint8_t low) //high och low är båda 2-komlement
 {
-	int16_t data = 0;
-	int16_t shifted = (uint16_t)high << 8;
- 39a:	99 27       	eor	r25, r25
- 39c:	87 fd       	sbrc	r24, 7
- 39e:	90 95       	com	r25
- 3a0:	98 2f       	mov	r25, r24
- 3a2:	88 27       	eor	r24, r24
-	data = (shifted | (uint16_t)low);
- 3a4:	33 27       	eor	r19, r19
- 3a6:	27 fd       	sbrc	r18, 7
- 3a8:	30 95       	com	r19
- 3aa:	82 2b       	or	r24, r18
- 3ac:	93 2b       	or	r25, r19
-		z_l_value = i2c_read_reg(acc_z_l_reg);
-		z_h_value = i2c_read_reg(acc_z_h_reg);
+	int16_t shifted_data = 0;
+	uint16_t shifted = (uint16_t)high << 8;
+ 37e:	90 e0       	ldi	r25, 0x00	; 0
+	shifted_data = (shifted | (uint16_t)low);
+ 380:	92 2b       	or	r25, r18
+		//z_l_value = i2c_read_reg(acc_z_l_reg);
+		//z_h_value = i2c_read_reg(acc_z_h_reg);
 		_delay_ms(10);
-		//Möjligtvis lägga in detta i avbrottsrutinen
+		//Möjligtvis lägga in detta i avbrottsrutinen?
 		volatile int16_t data_x = shift_data(x_h_value, x_l_value);
 		volatile int16_t data_y = shift_data(y_h_value, y_l_value);
- 3ae:	9a 87       	std	Y+10, r25	; 0x0a
- 3b0:	89 87       	std	Y+9, r24	; 0x09
-		volatile int16_t data_z = shift_data(z_h_value, z_l_value);
- 3b2:	2d 81       	ldd	r18, Y+5	; 0x05
- 3b4:	8e 81       	ldd	r24, Y+6	; 0x06
-//adafruit skiftar 4 till höger i slutet... why??
+ 382:	9e 83       	std	Y+6, r25	; 0x06
+ 384:	8d 83       	std	Y+5, r24	; 0x05
+ 386:	db cf       	rjmp	.-74     	; 0x33e <main+0x28>
 
-int16_t shift_data(int8_t high, int8_t low) //high och low är båda 2-komlement
-{
-	int16_t data = 0;
-	int16_t shifted = (uint16_t)high << 8;
- 3b6:	99 27       	eor	r25, r25
- 3b8:	87 fd       	sbrc	r24, 7
- 3ba:	90 95       	com	r25
- 3bc:	98 2f       	mov	r25, r24
- 3be:	88 27       	eor	r24, r24
-	data = (shifted | (uint16_t)low);
- 3c0:	33 27       	eor	r19, r19
- 3c2:	27 fd       	sbrc	r18, 7
- 3c4:	30 95       	com	r19
- 3c6:	82 2b       	or	r24, r18
- 3c8:	93 2b       	or	r25, r19
-		z_h_value = i2c_read_reg(acc_z_h_reg);
-		_delay_ms(10);
-		//Möjligtvis lägga in detta i avbrottsrutinen
-		volatile int16_t data_x = shift_data(x_h_value, x_l_value);
-		volatile int16_t data_y = shift_data(y_h_value, y_l_value);
-		volatile int16_t data_z = shift_data(z_h_value, z_l_value);
- 3ca:	98 87       	std	Y+8, r25	; 0x08
- 3cc:	8f 83       	std	Y+7, r24	; 0x07
- 3ce:	b7 cf       	rjmp	.-146    	; 0x33e <main+0x28>
+00000388 <__tablejump2__>:
+ 388:	ee 0f       	add	r30, r30
+ 38a:	ff 1f       	adc	r31, r31
 
-000003d0 <__tablejump2__>:
- 3d0:	ee 0f       	add	r30, r30
- 3d2:	ff 1f       	adc	r31, r31
+0000038c <__tablejump__>:
+ 38c:	05 90       	lpm	r0, Z+
+ 38e:	f4 91       	lpm	r31, Z
+ 390:	e0 2d       	mov	r30, r0
+ 392:	09 94       	ijmp
 
-000003d4 <__tablejump__>:
- 3d4:	05 90       	lpm	r0, Z+
- 3d6:	f4 91       	lpm	r31, Z
- 3d8:	e0 2d       	mov	r30, r0
- 3da:	09 94       	ijmp
+00000394 <_exit>:
+ 394:	f8 94       	cli
 
-000003dc <_exit>:
- 3dc:	f8 94       	cli
-
-000003de <__stop_program>:
- 3de:	ff cf       	rjmp	.-2      	; 0x3de <__stop_program>
+00000396 <__stop_program>:
+ 396:	ff cf       	rjmp	.-2      	; 0x396 <__stop_program>

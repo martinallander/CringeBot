@@ -56,6 +56,11 @@
 #define acc_z_h_reg 0x2D
 
 /*========================================================
+				Measurement parameters
+=========================================================*/
+#define accel_MG_LSB  (0.001F)
+#define gravity_value (9.82F)
+/*========================================================
 		Global variable and storage variable
 =========================================================*/
 
@@ -150,7 +155,7 @@ ISR(TWI_vect)
 		
 		break;
 	case TW_MR_SLA_ACK: //6
-		TWCR = (1 << TWINT)|(0 << TWSTA)|(0 << TWSTO)|(0 << TWEA)|(1 << TWEN)|(1 << TWIE); //lade till TWEA för att vi vill få en ACK.
+		TWCR = (1 << TWINT)|(0 << TWSTA)|(0 << TWSTO)|(0 << TWEA)|(1 << TWEN)|(1 << TWIE);
 		break;
 	case TW_MR_DATA_NACK: //7
 		rec_data = TWDR;
@@ -183,17 +188,6 @@ void led_blinker(uint8_t times)
 }
 
 
-//adafruit skiftar 4 till höger i slutet... why??
-
-int16_t shift_data(int8_t high, int8_t low) //high och low är båda 2-komlement
-{
-	int16_t data = 0;
-	int16_t shifted = (uint16_t)high << 8;
-	data = (shifted | (uint16_t)low);
-	return data;
-}
-
-
 void i2c_write_reg(uint8_t reg_addr, uint8_t data, int n)
 {
 	while(!i2c_done){};
@@ -214,20 +208,31 @@ uint8_t i2c_read_reg(uint8_t reg_addr)
 	return rec_data;
 }
 
+//adafruit skiftar 4 till höger i slutet... why??
 
+int16_t shift_data(uint8_t high, uint8_t low) //high och low är båda 2-komlement
+{
+	int16_t shifted_data = 0;
+	uint16_t shifted = (uint16_t)high << 8;
+	shifted_data = (shifted | (uint16_t)low);
+	return shifted_data;
+}
 
 int main(void)
 {
-	volatile int8_t x_l_value;
-	volatile int8_t x_h_value;
+	volatile uint8_t x_l_value;
+	volatile uint8_t x_h_value;
 	volatile int8_t y_l_value;
 	volatile int8_t y_h_value;
 	volatile int8_t z_l_value;
 	volatile int8_t z_h_value;
+	
 	DDRB = (1 << DDB0);
 	PORTB = (0 << PORTB0);
 	i2c_init();
 	sei();
+	//samplerate = 10Hz
+	uint8_t set_ctrl_reg_1_10 = 0b00100111;
 	//samplerate = 50Hz
 	uint8_t set_ctrl_reg_1_50 = 0b01000111;
 	//samplerate = 100Hz
@@ -236,22 +241,25 @@ int main(void)
 	We maybe need to look into CTRL_REG4_A(0x23) to adjust the sensitivity
 	CTRL_REG2_A(0x21) configurate a HP-filter
 	-----------------------------------------------------------------*/
-	i2c_write_reg(ctrl_reg_1, set_ctrl_reg_1_100, 1);
+	i2c_write_reg(ctrl_reg_1, set_ctrl_reg_1_10, 1);
 	while(1)
 	{
+
+		
+		
 		_delay_ms(10);
 	//	i2c_read_reg(ctrl_reg_1);
 		x_l_value = i2c_read_reg(acc_x_l_reg);
 		x_h_value = i2c_read_reg(acc_x_h_reg);
 		y_l_value = i2c_read_reg(acc_y_l_reg);
 		y_h_value = i2c_read_reg(acc_y_h_reg);
-		z_l_value = i2c_read_reg(acc_z_l_reg);
-		z_h_value = i2c_read_reg(acc_z_h_reg);
+		//z_l_value = i2c_read_reg(acc_z_l_reg);
+		//z_h_value = i2c_read_reg(acc_z_h_reg);
 		_delay_ms(10);
 		//Möjligtvis lägga in detta i avbrottsrutinen?
 		volatile int16_t data_x = shift_data(x_h_value, x_l_value);
 		volatile int16_t data_y = shift_data(y_h_value, y_l_value);
-		volatile int16_t data_z = shift_data(z_h_value, z_l_value);
+		//volatile int16_t data_z = shift_data(z_h_value, z_l_value);
 		
 	}
 	return 0;
