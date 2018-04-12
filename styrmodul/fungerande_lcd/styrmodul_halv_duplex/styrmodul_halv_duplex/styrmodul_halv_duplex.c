@@ -224,7 +224,6 @@ void stand(void)
 	reg_servo_angle(10, STAND_DEG_10);
 	reg_servo_angle(13, STAND_DEG_13);
 	reg_servo_angle(16, STAND_DEG_16);
-	action();
 	
 	reg_servo_angle(2, STAND_DEG_02);
 	reg_servo_angle(5, STAND_DEG_05);
@@ -288,14 +287,14 @@ void middle_left_forward_end(void)
 void middle_right_forward_start(void)
 {
 	reg_servo_angle(12, (STAND_DEG_12 - 5));
-	reg_servo_angle(13, (STAND_DEG_13 + 20));
+	reg_servo_angle(13, (STAND_DEG_13 + 10));
 	reg_servo_angle(14, STAND_DEG_14);
 }
 
 void middle_right_forward_end(void)
 {
 	reg_servo_angle(12, (STAND_DEG_12 + 5));
-	reg_servo_angle(13, (STAND_DEG_13 - 10));
+	reg_servo_angle(13, (STAND_DEG_13 - 20));
 	reg_servo_angle(14, (STAND_DEG_14 + 30));
 }
 
@@ -304,7 +303,7 @@ void back_left_forward_start(void)
 {
 	reg_servo_angle(6, (STAND_DEG_06 + 5));
 	reg_servo_angle(7, (STAND_DEG_07 + 20));
-	reg_servo_angle(8, (STAND_DEG_08 - 10));
+	reg_servo_angle(8, (STAND_DEG_08 - 5));
 }
 
 void back_left_forward_end(void)
@@ -326,8 +325,104 @@ void back_right_forward_end(void)
 {
 	reg_servo_angle(9, (STAND_DEG_09 - 5));
 	reg_servo_angle(10, (STAND_DEG_10 - 5));
-	reg_servo_angle(11, (STAND_DEG_11 + 15));
+	reg_servo_angle(11, (STAND_DEG_11 + 10));
 }
+
+
+/************************************************************************************************************
+*******************************************  Funktioner är enskilda ben v.2  ********************************
+************************************************************************************************************/
+/*
+//Funktioner för att förflytta det vänstra främre benet
+void front_left_forward_start(void)
+{
+	reg_servo_angle(0, 155);
+	reg_servo_angle(1, 70);
+	reg_servo_angle(2, 260);
+}
+
+void front_left_forward_end(void)
+{
+	reg_servo_angle(0, 145);
+	reg_servo_angle(1, 150);
+	reg_servo_angle(2, 220);
+}
+
+
+//Funktioner för att förflytta det högra främre benet
+void front_right_forward_start(void)
+{
+	reg_servo_angle(15, 155);
+	reg_servo_angle(16, 190);
+	reg_servo_angle(17, 100);
+}
+void front_right_forward_end(void)
+{
+	reg_servo_angle(15, 145);
+	reg_servo_angle(16, 270);
+	reg_servo_angle(17, 60);
+}
+
+//Funktioner för att förflytta det vänstra mellersta benet
+void middle_left_forward_start(void)
+{
+	reg_servo_angle(3, 145);
+	reg_servo_angle(4, 100);
+	reg_servo_angle(5, 230);
+}
+
+void middle_left_forward_end(void)
+{
+	reg_servo_angle(3, 155);
+	reg_servo_angle(4, 70);
+	reg_servo_angle(5, 260); //tidigare 230
+}
+
+//Funktioner för att förflytta det högra mellersta benet
+void middle_right_forward_start(void)
+{
+	reg_servo_angle(12, 145);
+	reg_servo_angle(13, 230);
+	reg_servo_angle(14, 70);
+}
+
+void middle_right_forward_end(void)
+{
+	reg_servo_angle(12, 155);
+	reg_servo_angle(13, 200);
+	reg_servo_angle(14, 100);
+}
+
+//Funktioner för att förflytta det bakre vänstra benet
+void back_left_forward_start(void)
+{
+	reg_servo_angle(6, 155);
+	reg_servo_angle(7, 85);
+	reg_servo_angle(8, 225);
+}
+
+void back_left_forward_end(void)
+{
+	reg_servo_angle(6, 145);
+	reg_servo_angle(7, 110);
+	reg_servo_angle(8, 245);
+}
+
+//Funktioner för att förflytta det högra bakre benet
+void back_right_forward_start(void)
+{
+	reg_servo_angle(9, 155);
+	reg_servo_angle(10, 205);
+	reg_servo_angle(11, 65);
+}
+
+void back_right_forward_end(void)
+{
+	reg_servo_angle(9, 145);
+	reg_servo_angle(10, 230);
+	reg_servo_angle(11, 85);
+}
+*/
 
 /************************************************************************************************************
 *******************************************  HÅRDKODAD GÅNG  ***********************************************
@@ -406,7 +501,7 @@ int main (void)
 			_delay_ms(50);
 			send_servo_command (0x06, READ, 2, params);
 			return_packet = servo_read_status_packet();
-			_delay_ms(30);				
+			_delay_ms(30);
 			LCD_Clear();
 			LCD_String("PRESENT ANGLE:");
 			LCD_Command(0xc0);
@@ -418,11 +513,85 @@ int main (void)
 	return 0;
 }
 
+/*
+int main (void)
+{
+	DDRB |= 0x03;
+	led_blink(3);
+	uart_init();
+	LCD_Init();
+
+	set_servo_status_return_level(0xfe, 0x01);
+	set_servo_torque(0xfe, 1023);
+	set_servo_max_speed(0xfe, 130);
+	_delay_ms(2000);
+	
+	const uint8_t *high_voltage_para[2] = {HIGHEST_VOLTAGE_LIMIT, 0x02};
+	const uint8_t *low_voltage_para[2] = {LOWEST_VOLTAGE_LIMIT, 0x01};
+	const uint8_t *temperature_para[2] = {HIGHEST_TEMPERATURE_LIMIT, 0x01};
+
+	char *lcd_value1 = "0";
+	char *lcd_value2 = "0";
+	char *lcd_value3 = "0";
+	uint16_t return_packet6;
+	uint16_t return_packet7;
+	uint16_t return_packet8;
+	LCD_Clear();
+	_delay_ms(2000);
+	
+	while(1)
+	{	
+		send_servo_command(8, READ, 2, high_voltage_para);
+		uint16_t high_volt = servo_read_status_packet();
+		itoa(high_volt, lcd_value1, 10);
+
+		send_servo_command(8, READ, 2, low_voltage_para);
+		uint16_t low_volt = servo_read_status_packet();
+		itoa(low_volt, lcd_value2, 10);
+		
+		send_servo_command(8, READ, 2, temperature_para);
+		uint16_t high_temp = servo_read_status_packet();
+		itoa(high_temp, lcd_value3, 10);
+		
+		LCD_String(lcd_value1);
+		LCD_Command(0x14);
+		LCD_Command(0x14);
+		LCD_Command(0x14);
+		LCD_String(lcd_value2);
+		LCD_Command(0x14);
+		LCD_Command(0x14);
+		LCD_Command(0x14);
+		LCD_String(lcd_value3);
+		_delay_ms(1000);
+		LCD_Clear();
+		
+		//
+		//reg_servo_angle(0, 150);
+		//reg_servo_angle(3, 150);
+		//reg_servo_angle(6, 150);
+		//reg_servo_angle(1, STAND_DEG_01);
+		//reg_servo_angle(4, STAND_DEG_01);
+		//reg_servo_angle(7, STAND_DEG_01);
+		//reg_servo_angle(2, STAND_DEG_02);
+		//reg_servo_angle(5, STAND_DEG_02);
+		//reg_servo_angle(8, STAND_DEG_02);
+		//action();
+		//_delay_ms(1000);
+		//reg_servo_angle(0, 120);
+		//reg_servo_angle(3, 120);
+		//reg_servo_angle(6, 120);
+		//reg_servo_angle(1, (STAND_DEG_01 + 30));
+		//reg_servo_angle(4, (STAND_DEG_01 + 30));
+		//reg_servo_angle(7, (STAND_DEG_01 + 30));
+		//reg_servo_angle(2, (STAND_DEG_02 - 30));
+		//reg_servo_angle(5, (STAND_DEG_02 - 30));
+		//reg_servo_angle(8, (STAND_DEG_02 - 30));
+		//action();
+		//_delay_ms(1000);
+	}
+
+	return 0;
+}
 
 
-//theos_forward_walk_start();
-//action();
-//_delay_ms(500);
-//theos_forward_walk_end();
-//action();
-//_delay_ms(500);
+*/

@@ -10,6 +10,9 @@
 #define LOWER_ANGLE_LIMIT    	   0x06 //Nedre vinkelgräns
 #define HIGHER_ANGLE_LIMIT         0x08 //Övre vinkelgräns
 #define PRESENT_ANGLE			   0X24
+#define LOWEST_VOLTAGE_LIMIT	   0X0c
+#define HIGHEST_VOLTAGE_LIMIT	   0x0d
+#define HIGHEST_TEMPERATURE_LIMIT  0x0b
 
 //Startvinklar då roboten står upp
 #define STAND_DEG_00				150
@@ -21,7 +24,7 @@
 
 #define STAND_DEG_01				 90
 #define STAND_DEG_04				 90
-#define STAND_DEG_07				 90
+#define STAND_DEG_07				100			//Ändrad från 90 till 100
 #define STAND_DEG_10				210
 #define STAND_DEG_13				210
 #define STAND_DEG_16				210
