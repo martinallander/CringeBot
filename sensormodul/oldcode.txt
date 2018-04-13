@@ -114,3 +114,29 @@ uint8_t i2c_start(uint8_t addr) //Takes the slave address and write/read bit. SA
 }
 
 
+
+
+unsigned char* struct_to_buffer(Sensor_Data sd)
+{
+	unsigned char *buffer = (unsigned char*) malloc(sizeof(sd));
+
+	memcpy(buffer, (const unsigned char*) & sd , sizeof(sd));
+
+	printf("Copied byte array is:\n");
+	for(int i = 0; i < sizeof(sd); i++)
+		printf("%02X ", buffer[i]);
+	printf("\n");
+	printf("%d\n", sizeof(buffer));
+	printf("%d\n", sizeof(sd));
+	printf("%f\n", sd.ir[0]);
+	printf("%f\n", sd.ir[1]);
+	printf("%f\n", sd.ir[2]);
+	printf("%f\n", sd.ir[3]);
+	return buffer;
+}
+
+Sensor_Data buffer_to_struct(unsigned char * buffer)
+{
+
+	float x = *(float *)buffer;
+}

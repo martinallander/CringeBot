@@ -67,6 +67,25 @@ typedef FIFO_Queue FIFO;
 int main()
 {
 	FIFO f;
+  	int i = 0;
+  	while(i < 14)
+  	{
+  		Sensor_Data s;
+  		s.acc_x = i;
+  		f.enqueue(s);
+  		i++;
+  	}
+  	while(i > 0)
+  	{
+  		printf("Value: %d \n", f.dequeue().acc_x);
+  		i--;
+  	}
+//	printf("Int %d", dequeue(f));
+
+	
+	return 0;
+}
+
 	/*
 	printf("Rear %d \n", f.rear);
 	enqueue(f, 1);
@@ -86,21 +105,3 @@ int main()
   	printf("Front %d \n", f.front);
   	printf("Rear %d \n", f.rear);
   	*/
-  	int i = 0;
-  	while(i < 14)
-  	{
-  		Sensor_Data s;
-  		s.acc_x = i;
-  		f.enqueue(s);
-  		i++;
-  	}
-  	while(i > 0)
-  	{
-  		printf("Value: %d \n", f.dequeue().acc_x);
-  		i--;
-  	}
-//	printf("Int %d", dequeue(f));
-
-	
-	return 0;
-}
