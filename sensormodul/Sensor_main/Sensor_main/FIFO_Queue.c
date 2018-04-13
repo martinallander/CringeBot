@@ -81,27 +81,5 @@ int main()
   		i--;
   	}
 //	printf("Int %d", dequeue(f));
-
-	
 	return 0;
 }
-
-	/*
-	printf("Rear %d \n", f.rear);
-	enqueue(f, 1);
-	printf("Rear %d \n", f.rear);
-	enqueue(f, 2);
-	printf("Rear %d \n", f.rear);
-	enqueue(f, 3);
-	printf("Rear %d \n", f.rear);
-	printf("Front %d \n", f.front);
-	printf("Int %d \n", dequeue(f));
-	printf("Front %d \n", f.front);
-  	printf("Int %d \n", dequeue(f));
-  	printf("Front %d \n", f.front);
-  	printf("Int %d \n", dequeue(f));
-  	printf("Front %d \n", f.front);
-  	printf("Int %d \n", dequeue(f));
-  	printf("Front %d \n", f.front);
-  	printf("Rear %d \n", f.rear);
-  	*/
