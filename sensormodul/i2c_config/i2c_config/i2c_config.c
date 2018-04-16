@@ -59,7 +59,7 @@
 				Measurement parameters
 =========================================================*/
 float accel_MG_LSB = 0.001F;
-float gravity_value = 9.82F;
+float gravity_value = 9.821F;
 /*========================================================
 		Global variable and storage variable
 =========================================================*/
@@ -121,10 +121,10 @@ ISR(TWI_vect)
 	uint8_t status = (TWSR & 0xF8);
 	switch (status)
 	{
-	case TW_START: //1
+	case TW_START: //0x08
 		i2c_send_data(accel_addr + I2C_WRITE);
 		break;
-	case TW_REP_START: //2
+	case TW_REP_START: //0x10
 		i2c_send_data(accel_addr + I2C_READ);
 		break;
 		
@@ -208,23 +208,14 @@ uint8_t i2c_read_reg(uint8_t reg_addr)
 	return rec_data;
 }
 
-//adafruit skiftar 4 till höger i slutet... why??
-
-int16_t shift_data(uint8_t high, uint8_t low) //high och low är INTE(?) 2-komplement
-{
-	int16_t shifted_data = 0;
-	uint16_t shifted = (uint16_t)high << 8;
-	shifted_data = (shifted | (uint16_t)low);
-	return shifted_data;
-}
-
 float data_formater(uint8_t low, uint8_t high)
 {
-	//volatile int kuk = high;
 	//fattar inte varför de skiftar 4 steg åt höger...
-	int16_t out_data = (int16_t)(low | (high << 8)) >> 4;// kan behöva sätta int16_t på low och high
-	out_data = out_data * gravity_value * accel_MG_LSB;
-	return out_data;
+	int16_t merged_data = (int16_t)(low | (high << 8)) >> 4;// kan behöva sätta int16_t på low och high
+	//_delay_ms(10);
+
+	float fromated_data = (float)merged_data * gravity_value * accel_MG_LSB;
+	return fromated_data;
 }
 
 int main(void)
@@ -237,7 +228,7 @@ int main(void)
 	volatile uint8_t z_h_value;
 	
 	volatile uint8_t ctrl_reg_data;
-	volatile int16_t data_x;
+	volatile float data_x;
 	volatile int16_t data_y;
 	
 	DDRB = (1 << DDB0);
@@ -254,17 +245,14 @@ int main(void)
 	We maybe need to look into CTRL_REG4_A(0x23) to adjust the sensitivity
 	CTRL_REG2_A(0x21) configurate a HP-filter
 	-----------------------------------------------------------------*/
-	//i2c_write_reg(ctrl_reg_1, set_ctrl_reg_1_100, 1);
-	//ctrl_reg_data = i2c_read_reg(ctrl_reg_1);
 	i2c_write_reg(ctrl_reg_1, set_ctrl_reg_1_100, 1);
 	ctrl_reg_data = i2c_read_reg(ctrl_reg_1);
 	while(1)
 	{
-	//	_delay_ms(10);
-		//_delay_ms(10);
 		x_l_value = i2c_read_reg(acc_x_l_reg);
 		_delay_ms(10);
 		x_h_value = i2c_read_reg(acc_x_h_reg);
+		//_delay_ms(1000);
 		data_x = data_formater(x_l_value,x_h_value);
 		
 		//y_l_value = i2c_read_reg(acc_y_l_reg);
