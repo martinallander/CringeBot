@@ -54,10 +54,10 @@ ISR(TWI_vect)
 	switch (status)
 	{
 		case TW_START: //0x08
-		i2c_send_data(accel_addr + I2C_WRITE);
+		i2c_send_data(temp_addr + I2C_WRITE);
 		break;
 		case TW_REP_START: //0x10
-		i2c_send_data(accel_addr + I2C_READ);
+		i2c_send_data(temp_addr + I2C_READ);
 		break;
 		
 		case TW_MT_SLA_ACK: //3

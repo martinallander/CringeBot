@@ -14,6 +14,7 @@
 #define I2C_READ	1
 
 #define accel_addr 0x32
+#define temp_addr 0b1101000
 
 #define ctrl_reg_1 0x20
 #define acc_x_l_reg 0x28
@@ -25,3 +26,6 @@
 #define set_ctrl_reg_1_10 = 0b00100111 //10Hz
 #define set_ctrl_reg_1_50 0b01000111 //50Hz
 #define set_ctrl_reg_1_100 0b01010111 //100Hz
+
+#define start_pixel 0x80
+#define end_pixel 0xFF
