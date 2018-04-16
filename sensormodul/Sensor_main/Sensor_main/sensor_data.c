@@ -14,8 +14,7 @@ struct Sensor_Data
 	short gyro_z;
 	float tof_distance;
 	float ir[64];
-};
-
+}; typedef struct Sensor_Data Sensor_Data;
 #define PACKET_SIZE (sizeof(Sensor_Data))
 
 union SPI_Packet

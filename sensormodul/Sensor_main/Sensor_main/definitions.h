@@ -22,7 +22,6 @@
 #define acc_y_h_reg 0x2B
 #define acc_z_l_reg 0x2C
 #define acc_z_h_reg 0x2D
-//50Hz
-#define set_ctrl_reg_1_50 0b01000111
-//100Hz
-#define set_ctrl_reg_1_100 0b01010111
+#define set_ctrl_reg_1_10 = 0b00100111 //10Hz
+#define set_ctrl_reg_1_50 0b01000111 //50Hz
+#define set_ctrl_reg_1_100 0b01010111 //100Hz

@@ -26,48 +26,47 @@ struct FIFO_Queue
 	{
 		return (length==MAX_SIZE);
 	}
-	
-	void enqueue(Sensor_Data data)
-	{
-		if(!is_full())
-		{
-			if(rear == MAX_SIZE-1) 
-			{
-			rear = -1;            
-			}
-			array[++rear] = data;
-			length++;
-		}
-		else
-		{
-			fprintf(stderr, "Queue is full, can not enqueue! \n");
-		}
-	}
-
-	Sensor_Data dequeue()
-	{
-		if(length == 0)
-		{
-			fprintf(stderr, "Queue is empty, can not dequeue! \n");
-			return Sensor_Data();
-		}
-		Sensor_Data data = array[front++];
-		if (front == MAX_SIZE)
-		{
-			front = 0;
-		};
-		length--;
-		return data;
-	}
 };
-typedef FIFO_Queue FIFO;
+typedef struct FIFO_Queue FIFO;
 
+Sensor_Data dequeue(FIFO* f)
+{
+	if(f.length == 0)
+	{
+		fprintf(stderr, "Queue is empty, can not dequeue! \n");
+		return Sensor_Data();
+	}
+	Sensor_Data data = f.array[front++];
+	if (f.front == MAX_SIZE)
+	{
+		f.front = 0;
+	};
+	length--;
+	return f.data;
+}
 
+void enqueue(FIFO* f, Sensor_Data data)
+{
+	if(!f.is_full())
+	{
+		if(f.rear == MAX_SIZE-1)
+		{
+			f.rear = -1;
+		}
+		f.array[++f.rear] = f.data;
+		f.length++;
+	}
+	else
+	{
+		fprintf(stderr, "Queue is full, can not enqueue! \n");
+	}
+}
 
 int main()
 {
 	FIFO f;
   	int i = 0;
+	  /*
   	while(i < 14)
   	{
   		Sensor_Data s;
@@ -81,5 +80,6 @@ int main()
   		i--;
   	}
 //	printf("Int %d", dequeue(f));
+*/
 	return 0;
 }

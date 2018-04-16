@@ -37,6 +37,7 @@ SUBDIRS :=
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
+../i2c.c \
 ../Sensor_main.c
 
 
@@ -47,15 +48,19 @@ ASM_SRCS +=
 
 
 OBJS +=  \
+i2c.o \
 Sensor_main.o
 
 OBJS_AS_ARGS +=  \
+i2c.o \
 Sensor_main.o
 
 C_DEPS +=  \
+i2c.d \
 Sensor_main.d
 
 C_DEPS_AS_ARGS +=  \
+i2c.d \
 Sensor_main.d
 
 OUTPUT_FILE_PATH +=Sensor_main.elf
@@ -72,6 +77,8 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
 
 
 

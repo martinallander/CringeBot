@@ -229,7 +229,8 @@ int main(void)
 	
 	volatile uint8_t ctrl_reg_data;
 	volatile float data_x;
-	volatile int16_t data_y;
+	volatile float data_y;
+	volatile float data_z;
 	
 	DDRB = (1 << DDB0);
 	PORTB = (0 << PORTB0);
@@ -255,12 +256,15 @@ int main(void)
 		//_delay_ms(1000);
 		data_x = data_formater(x_l_value,x_h_value);
 		
-		//y_l_value = i2c_read_reg(acc_y_l_reg);
-		//y_h_value = i2c_read_reg(acc_y_h_reg);
-		//data_y = data_formater(y_l_value,y_h_value);
+		y_l_value = i2c_read_reg(acc_y_l_reg);
+		_delay_ms(10);
+		y_h_value = i2c_read_reg(acc_y_h_reg);
+		data_y = data_formater(y_l_value,y_h_value);
 		
-		//z_l_value = i2c_read_reg(acc_z_l_reg);
-		//z_h_value = i2c_read_reg(acc_z_h_reg);
+		z_l_value = i2c_read_reg(acc_z_l_reg);
+		_delay_ms(10);
+		z_h_value = i2c_read_reg(acc_z_h_reg);
+		data_z = data_formater(z_l_value,z_h_value);
 		_delay_ms(10);
 		//Möjligtvis lägga in detta i avbrottsrutinen?
 		//volatile int16_t data_x = shift_data(x_h_value, x_l_value);
