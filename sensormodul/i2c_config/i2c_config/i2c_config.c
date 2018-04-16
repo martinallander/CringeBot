@@ -26,7 +26,7 @@
 #endif
 
 
-#define F_SCL 50UL
+#define F_SCL 50UL //ska vara den variabel 
 #define Prescaler 1
 #define TWBR_value ((((F_CPU/F_SCL)/Prescaler)-16)/2)
 
@@ -58,8 +58,8 @@
 /*========================================================
 				Measurement parameters
 =========================================================*/
-#define accel_MG_LSB  (0.001F)
-#define gravity_value (9.82F)
+float accel_MG_LSB = 0.001F;
+float gravity_value = 9.82F;
 /*========================================================
 		Global variable and storage variable
 =========================================================*/
@@ -84,7 +84,7 @@ volatile int n_o_writes = 0;
 void i2c_init(void)
 {	
 	TWSR = 0x00; //Set prescaler-bitar to zero.
-	TWBR = 0x0C;
+	TWBR = 0x92; //från källe-man
 	TWCR = (1 << TWEN)|(1 << TWIE);
 }
 
@@ -141,6 +141,7 @@ ISR(TWI_vect)
 			if(n_o_writes == 0)
 			{
 				i2c_stop();
+				break;
 			}
 			else
 			{
@@ -163,7 +164,6 @@ ISR(TWI_vect)
 		break;
 	case TW_MR_DATA_ACK: //8
 		rec_data = TWDR;
-			led_blinker(3);
 		i2c_stop();
 
 		break;
@@ -204,13 +204,13 @@ uint8_t i2c_read_reg(uint8_t reg_addr)
 	register_addr = reg_addr;
 	write_to_slave = 0;
 	i2c_start();
-	
+	while(!i2c_done){};
 	return rec_data;
 }
 
 //adafruit skiftar 4 till höger i slutet... why??
 
-int16_t shift_data(uint8_t high, uint8_t low) //high och low är båda 2-komlement
+int16_t shift_data(uint8_t high, uint8_t low) //high och low är INTE(?) 2-komplement
 {
 	int16_t shifted_data = 0;
 	uint16_t shifted = (uint16_t)high << 8;
@@ -218,14 +218,27 @@ int16_t shift_data(uint8_t high, uint8_t low) //high och low är båda 2-komlement
 	return shifted_data;
 }
 
+float data_formater(uint8_t low, uint8_t high)
+{
+	//volatile int kuk = high;
+	//fattar inte varför de skiftar 4 steg åt höger...
+	int16_t out_data = (int16_t)(low | (high << 8)) >> 4;// kan behöva sätta int16_t på low och high
+	out_data = out_data * gravity_value * accel_MG_LSB;
+	return out_data;
+}
+
 int main(void)
 {
 	volatile uint8_t x_l_value;
 	volatile uint8_t x_h_value;
-	volatile int8_t y_l_value;
-	volatile int8_t y_h_value;
-	volatile int8_t z_l_value;
-	volatile int8_t z_h_value;
+	volatile uint8_t y_l_value;
+	volatile uint8_t y_h_value;
+	volatile uint8_t z_l_value;
+	volatile uint8_t z_h_value;
+	
+	volatile uint8_t ctrl_reg_data;
+	volatile int16_t data_x;
+	volatile int16_t data_y;
 	
 	DDRB = (1 << DDB0);
 	PORTB = (0 << PORTB0);
@@ -241,24 +254,29 @@ int main(void)
 	We maybe need to look into CTRL_REG4_A(0x23) to adjust the sensitivity
 	CTRL_REG2_A(0x21) configurate a HP-filter
 	-----------------------------------------------------------------*/
-	i2c_write_reg(ctrl_reg_1, set_ctrl_reg_1_10, 1);
+	//i2c_write_reg(ctrl_reg_1, set_ctrl_reg_1_100, 1);
+	//ctrl_reg_data = i2c_read_reg(ctrl_reg_1);
+	i2c_write_reg(ctrl_reg_1, set_ctrl_reg_1_100, 1);
+	ctrl_reg_data = i2c_read_reg(ctrl_reg_1);
 	while(1)
 	{
-
-		
-		
-		_delay_ms(10);
-	//	i2c_read_reg(ctrl_reg_1);
+	//	_delay_ms(10);
+		//_delay_ms(10);
 		x_l_value = i2c_read_reg(acc_x_l_reg);
+		_delay_ms(10);
 		x_h_value = i2c_read_reg(acc_x_h_reg);
-		y_l_value = i2c_read_reg(acc_y_l_reg);
-		y_h_value = i2c_read_reg(acc_y_h_reg);
+		data_x = data_formater(x_l_value,x_h_value);
+		
+		//y_l_value = i2c_read_reg(acc_y_l_reg);
+		//y_h_value = i2c_read_reg(acc_y_h_reg);
+		//data_y = data_formater(y_l_value,y_h_value);
+		
 		//z_l_value = i2c_read_reg(acc_z_l_reg);
 		//z_h_value = i2c_read_reg(acc_z_h_reg);
 		_delay_ms(10);
 		//Möjligtvis lägga in detta i avbrottsrutinen?
-		volatile int16_t data_x = shift_data(x_h_value, x_l_value);
-		volatile int16_t data_y = shift_data(y_h_value, y_l_value);
+		//volatile int16_t data_x = shift_data(x_h_value, x_l_value);
+		//volatile int16_t data_y = shift_data(y_h_value, y_l_value);
 		//volatile int16_t data_z = shift_data(z_h_value, z_l_value);
 		
 	}

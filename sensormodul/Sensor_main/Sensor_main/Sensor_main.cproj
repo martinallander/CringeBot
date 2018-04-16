@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>6.2</ProjectVersion>
     <ToolchainName>com.Atmel.AVRGCC8.C</ToolchainName>
-    <ProjectGuid>{ac644e46-15bf-4d63-b9b2-f6d674f6a0b2}</ProjectGuid>
+    <ProjectGuid>{db3c8a36-cf3e-4e66-8379-5eff552d9560}</ProjectGuid>
     <avrdevice>ATmega1284P</avrdevice>
     <avrdeviceseries>none</avrdeviceseries>
     <OutputType>Executable</OutputType>
@@ -12,9 +12,9 @@
     <OutputFileName>$(MSBuildProjectName)</OutputFileName>
     <OutputFileExtension>.elf</OutputFileExtension>
     <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
-    <AssemblyName>i2c_config</AssemblyName>
-    <Name>i2c_config</Name>
-    <RootNamespace>i2c_config</RootNamespace>
+    <AssemblyName>Sensor_main</AssemblyName>
+    <Name>Sensor_main</Name>
+    <RootNamespace>Sensor_main</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
     <KeepTimersRunning>true</KeepTimersRunning>
     <OverrideVtor>false</OverrideVtor>
@@ -39,18 +39,6 @@
       </framework-data>
     </AsfFrameworkConfig>
     <avrtool>com.atmel.avrdbg.tool.atmelice</avrtool>
-    <com_atmel_avrdbg_tool_simulator>
-      <ToolOptions>
-        <InterfaceProperties>
-        </InterfaceProperties>
-        <InterfaceName>JTAG</InterfaceName>
-      </ToolOptions>
-      <ToolType>com.atmel.avrdbg.tool.simulator</ToolType>
-      <ToolNumber>
-      </ToolNumber>
-      <ToolName>Simulator</ToolName>
-    </com_atmel_avrdbg_tool_simulator>
-    <avrtoolinterface>JTAG</avrtoolinterface>
     <com_atmel_avrdbg_tool_atmelice>
       <ToolOptions>
         <InterfaceProperties>
@@ -59,9 +47,10 @@
         <InterfaceName>JTAG</InterfaceName>
       </ToolOptions>
       <ToolType>com.atmel.avrdbg.tool.atmelice</ToolType>
-      <ToolNumber>J41800005321</ToolNumber>
+      <ToolNumber>J41800054412</ToolNumber>
       <ToolName>Atmel-ICE</ToolName>
     </com_atmel_avrdbg_tool_atmelice>
+    <avrtoolinterface>JTAG</avrtoolinterface>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
@@ -122,7 +111,7 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="i2c_config.c">
+    <Compile Include="Sensor_main.c">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>
