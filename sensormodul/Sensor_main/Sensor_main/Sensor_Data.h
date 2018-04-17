@@ -1,6 +1,5 @@
 #ifndef SENSOR_DATA
 #define SENSOR_DATA
-#endif
 
 struct Sensor_Data
 {
@@ -23,4 +22,4 @@ union SPI_Packet
 	unsigned char packet[sizeof(Sensor_Data)];
 }; typedef union SPI_Packet SPI_Packet;
 
-Sensor_Data create_empty_sensor(bool data);
+#endif
