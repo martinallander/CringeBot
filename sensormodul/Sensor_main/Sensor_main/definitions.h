@@ -31,6 +31,6 @@
 //#define temp_addr 0b1101000
 #define temp_addr 0xD2
 
-#define start_pixel 0x81 //0x80 + 1
-#define end_pixel 0xFF
+#define start_pixel 0x80 //Lowbyte för första pixeln (nr 0)
+#define end_pixel 0xFE	//Lowbyte för sista pixeln (nr 63)
 #define set_frame_rate 0x02 

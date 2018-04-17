@@ -55,10 +55,10 @@ ISR(TWI_vect)
 	switch (status)
 	{
 		case TW_START: //0x08
-		i2c_send_data(temp_addr + I2C_WRITE);
+		i2c_send_data(device_addr + I2C_WRITE);
 		break;
 		case TW_REP_START: //0x10
-		i2c_send_data(temp_addr + I2C_READ);
+		i2c_send_data(device_addr + I2C_READ);
 		break;
 		
 		case TW_MT_SLA_ACK: //3
@@ -102,21 +102,23 @@ ISR(TWI_vect)
 	}
 }
 
-void i2c_write_reg(uint8_t reg_addr, uint8_t data, int n)
+void i2c_write_reg(uint8_t device_address, uint8_t reg_addr, uint8_t data, int n)
 {
 	while(!i2c_done){};
 	n_o_writes = n;
 	register_addr = reg_addr;
+	device_addr = device_address;
 	trans_data = data;
 	write_to_slave = 1;
 	i2c_start();
 }
 
-uint8_t i2c_read_reg(uint8_t reg_addr, int n)
+uint8_t i2c_read_reg(uint8_t device_address, uint8_t reg_addr, int n)
 {
 	while(!i2c_done){};
 	n_o_reads = n;
 	register_addr = reg_addr;
+	device_addr = device_address;
 	write_to_slave = 0;
 	i2c_start();
 	while(!i2c_done){};

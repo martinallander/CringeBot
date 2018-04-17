@@ -39,9 +39,7 @@ float format_acc(uint8_t low, uint8_t high)
 float format_temp(uint8_t low, uint8_t high)
 {
 	//fattar inte varför de skiftar 4 steg åt höger...
-	int16_t merged_data = (int16_t)(low +high*256);// kan behöva sätta int16_t på low och high
-	//_delay_ms(10);
-
+	int16_t merged_data = (int16_t)(low + high*256);// kan behöva sätta int16_t på low och high
 	return (float)merged_data*0.25;
 }
 
@@ -63,6 +61,10 @@ int main(void)
 	volatile float data_z;
 	
 	volatile float temp_data;
+	volatile float temperature[64] = {};
+		
+	volatile float data_1;
+	volatile float data_2;
 	
 	DDRB = (1 << DDB0);
 	PORTB = (0 << PORTB0);
@@ -74,15 +76,26 @@ int main(void)
 	-----------------------------------------------------------------*/
 	//i2c_write_reg(ctrl_reg_1, set_ctrl_reg_1_100, 1);
 	//led_blinker(1);
-	i2c_write_reg(set_frame_rate, 0x00, 1);
+	i2c_write_reg(temp_addr, set_frame_rate, 0x00, 1);
 	//ctrl_reg_data = i2c_read_reg(ctrl_reg_1);
 	
 	while(1)
 	{
- 		temp_l = i2c_read_reg(start_pixel);
-		//_delay_ms(10);
-		temp_h = i2c_read_reg(start_pixel + 1);
-		temp_data = format_temp(temp_l, temp_h);
+		for(int i = 0; i < 64; i++)
+		{
+			temp_l = i2c_read_reg(temp_addr, start_pixel + 2*i);
+			//_delay_ms(100);
+			temp_h = i2c_read_reg(temp_addr, start_pixel + 2*i + 1);
+			temperature[i] = format_temp(temp_l, temp_h);
+		}
+		led_blinker(1);
+ 		data_1 = temperature[28];
+		data_2 = temperature[27];
+		//temp_l = i2c_read_reg(start_pixel);
+		//_delay_ms(1);
+		//temp_h = i2c_read_reg(start_pixel + 1);
+		//temp_data = format_temp(temp_l, temp_h);
+	
 		/*
 		x_l_value = i2c_read_reg(acc_x_l_reg);
 		_delay_ms(10);
