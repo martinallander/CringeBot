@@ -1,85 +1,84 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdbool.h>
-#include "Sensor_Data.c"
+#include "FIFO_Queue.h"
 
-#define MAX_SIZE 10
 
-struct FIFO_Queue
+FIFO create_empty_FIFO()
 {
-	Sensor_Data array[MAX_SIZE];
-	int front = 0;
-	int rear = -1;
-	int length = 0;
+	FIFO f;
+	f.front = 0;
+	f.rear = -1;
+	f.length = 0;
+	return f;
+}
 
-	Sensor_Data get_front()
-	{
-		return array[front];
-	}
+Sensor_Data get_front(FIFO f)
+{
+	return f.array[f.front];
+}
 
-	Sensor_Data get_rear()
-	{
-		return array[rear];
-	}
+Sensor_Data get_rear(FIFO f)
+{
+	return f.array[f.rear];
+}
 
-	bool is_full()
-	{
-		return (length==MAX_SIZE);
-	}
+bool is_full(FIFO f)
+{
+	return (f.length==MAX_SIZE);
+}
 	
-	void enqueue(Sensor_Data data)
+void enqueue(FIFO* f, Sensor_Data data)
+{
+	if(is_full(*f))
 	{
-		if(!is_full())
+		if(f->rear == MAX_SIZE-1) 
 		{
-			if(rear == MAX_SIZE-1) 
-			{
-			rear = -1;            
-			}
-			array[++rear] = data;
-			length++;
+			f->rear = -1;            
 		}
-		else
-		{
-			fprintf(stderr, "Queue is full, can not enqueue! \n");
-		}
+		f->array[++f->rear] = data;
+		f->length++;
 	}
+	else
+	{
+		fprintf(stderr, "Queue is full, can not enqueue! \n");
+	}
+}
 
-	Sensor_Data dequeue()
+Sensor_Data dequeue(FIFO* f)
+{
+	if(f->length == 0)
 	{
-		if(length == 0)
-		{
-			fprintf(stderr, "Queue is empty, can not dequeue! \n");
-			return Sensor_Data();
-		}
-		Sensor_Data data = array[front++];
-		if (front == MAX_SIZE)
-		{
-			front = 0;
-		};
-		length--;
-		return data;
+		fprintf(stderr, "Queue is empty, can not dequeue! \n");
+		return null_ptr;
 	}
-};
-typedef FIFO_Queue FIFO;
+	Sensor_Data data = f->array[f->front++];
+	if (f->front == MAX_SIZE)
+	{
+		f->front = 0;
+	};
+	f->length--;
+	return data;
+}
 
 
 
 int main()
 {
-	FIFO f;
+	/*
+	//f = (FIFO){,1,-1,0};
   	int i = 0;
   	while(i < 14)
   	{
   		Sensor_Data s;
   		s.acc_x = i;
-  		f.enqueue(s);
+  		enqueue(s);
   		i++;
   	}
   	while(i > 0)
   	{
   		printf("Value: %d \n", f.dequeue().acc_x);
   		i--;
-  	}
+  	}*/
 //	printf("Int %d", dequeue(f));
 	return 0;
 }
