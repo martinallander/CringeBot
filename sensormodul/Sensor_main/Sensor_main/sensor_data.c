@@ -5,6 +5,20 @@
 
 //typedef unsigned char byte;
 
+Sensor_Data create_empty_sensor(bool data)
+{
+	Sensor_Data sd;
+	sd.acc_x = 0;
+	sd.acc_y = 0;
+	sd.acc_z = 0;
+	sd.gyro_x = 0;
+	sd.gyro_y = 0;
+	sd.gyro_z = 0;
+	sd.tof_distance = 0;
+	sd.has_data = data;
+	return sd;
+}
+
 int main()
 {
 	SPI_Packet sp;
