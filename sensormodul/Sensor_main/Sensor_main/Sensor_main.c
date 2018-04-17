@@ -39,17 +39,17 @@ float format_acc(uint8_t low, uint8_t high)
 float format_temp(uint8_t low, uint8_t high)
 {
 	//fattar inte varför de skiftar 4 steg åt höger...
-	int16_t merged_data = (int16_t)(low | (high << 8)) >> 4;// kan behöva sätta int16_t på low och high
+	int16_t merged_data = (int16_t)(low +high*256);// kan behöva sätta int16_t på low och high
 	//_delay_ms(10);
 
-	return (float)merged_data;
+	return (float)merged_data*0.25;
 }
 
 int main(void)
 {
 	volatile uint8_t x_l_value;
 	volatile uint8_t x_h_value;
-	volatile uint8_t y_l_value;
+	volatile uint8_t y_l_value; 
 	volatile uint8_t y_h_value;
 	volatile uint8_t z_l_value;
 	volatile uint8_t z_h_value;
@@ -62,6 +62,8 @@ int main(void)
 	volatile float data_y;
 	volatile float data_z;
 	
+	volatile float temp_data;
+	
 	DDRB = (1 << DDB0);
 	PORTB = (0 << PORTB0);
 	i2c_init();
@@ -71,14 +73,16 @@ int main(void)
 	CTRL_REG2_A(0x21) configurate a HP-filter 
 	-----------------------------------------------------------------*/
 	//i2c_write_reg(ctrl_reg_1, set_ctrl_reg_1_100, 1);
-	led_blinker(5);
+	//led_blinker(1);
+	i2c_write_reg(set_frame_rate, 0x00, 1);
 	//ctrl_reg_data = i2c_read_reg(ctrl_reg_1);
+	
 	while(1)
 	{
-		temp_l = i2c_read_reg(start_pixel);
-		_delay_ms(10);
+ 		temp_l = i2c_read_reg(start_pixel);
+		//_delay_ms(10);
 		temp_h = i2c_read_reg(start_pixel + 1);
-		
+		temp_data = format_temp(temp_l, temp_h);
 		/*
 		x_l_value = i2c_read_reg(acc_x_l_reg);
 		_delay_ms(10);

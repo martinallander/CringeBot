@@ -10,6 +10,7 @@ volatile uint8_t rec_data;
 volatile uint8_t device_addr;
 volatile uint8_t register_addr;
 volatile int n_o_writes = 0;
+volatile int n_o_reads = 0;
 
 //Initializer of i2c
 void i2c_init(void)
@@ -64,8 +65,7 @@ ISR(TWI_vect)
 		i2c_send_data(register_addr); //load the register we want to handle
 		break;
 		case TW_MT_SLA_NACK: //4
-		led_blinker(1);
-		i2c_stop();
+		i2c_stop();	
 		break;
 		case TW_MT_DATA_ACK: //5
 		if(write_to_slave)
@@ -112,9 +112,10 @@ void i2c_write_reg(uint8_t reg_addr, uint8_t data, int n)
 	i2c_start();
 }
 
-uint8_t i2c_read_reg(uint8_t reg_addr)
+uint8_t i2c_read_reg(uint8_t reg_addr, int n)
 {
 	while(!i2c_done){};
+	n_o_reads = n;
 	register_addr = reg_addr;
 	write_to_slave = 0;
 	i2c_start();
