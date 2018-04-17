@@ -239,95 +239,94 @@ void stand(void)
 ************************************************************************************************************/
 
 //Funktioner för att förflytta det vänstra främre benet
-void front_left_forward_start(void)
-{
-	reg_servo_angle(0, (STAND_DEG_00 + 5));
-	reg_servo_angle(1, (STAND_DEG_01 - 20));
-	reg_servo_angle(2, (STAND_DEG_02 + 30));
-}
-
-void front_left_forward_end(void)
-{
-	reg_servo_angle(0, (STAND_DEG_00 - 5));
-	reg_servo_angle(1, (STAND_DEG_01 + 60));
-	reg_servo_angle(2, (STAND_DEG_02 - 10));
-}
-
-
-//Funktioner för att förflytta det högra främre benet
-void front_right_forward_start(void)
-{
-	reg_servo_angle(15, (STAND_DEG_15 + 5));
-	reg_servo_angle(16, (STAND_DEG_16 - 20));
-	reg_servo_angle(17, (STAND_DEG_17 + 30));
-}
-void front_right_forward_end(void)
-{
-	reg_servo_angle(15, (STAND_DEG_15 - 5));
-	reg_servo_angle(16, (STAND_DEG_16 + 60));
-	reg_servo_angle(17, (STAND_DEG_17 - 10));
-}
-
-//Funktioner för att förflytta det vänstra mellersta benet
-void middle_left_forward_start(void)
-{
-	reg_servo_angle(3, (STAND_DEG_03 - 5));
-	reg_servo_angle(4, (STAND_DEG_04 + 10));
-	reg_servo_angle(5, STAND_DEG_05);
-}
-
-void middle_left_forward_end(void)
-{
-	reg_servo_angle(3, (STAND_DEG_03 + 5));
-	reg_servo_angle(4, (STAND_DEG_04 - 20));
-	reg_servo_angle(5, (STAND_DEG_05 + 30)); //tidigare 230
-}
-
-//Funktioner för att förflytta det högra mellersta benet
-void middle_right_forward_start(void)
-{
-	reg_servo_angle(12, (STAND_DEG_12 - 5));
-	reg_servo_angle(13, (STAND_DEG_13 + 10));
-	reg_servo_angle(14, STAND_DEG_14);
-}
-
-void middle_right_forward_end(void)
-{
-	reg_servo_angle(12, (STAND_DEG_12 + 5));
-	reg_servo_angle(13, (STAND_DEG_13 - 20));
-	reg_servo_angle(14, (STAND_DEG_14 + 30));
-}
-
-//Funktioner för att förflytta det bakre vänstra benet
-void back_left_forward_start(void)
-{
-	reg_servo_angle(6, (STAND_DEG_06 + 5));
-	reg_servo_angle(7, (STAND_DEG_07 + 20));
-	reg_servo_angle(8, (STAND_DEG_08 - 5));
-}
-
-void back_left_forward_end(void)
-{
-	reg_servo_angle(6, (STAND_DEG_06 - 5));
-	reg_servo_angle(7, (STAND_DEG_07 - 5));
-	reg_servo_angle(8, (STAND_DEG_08 + 10));
-}
-
-//Funktioner för att förflytta det högra bakre benet
-void back_right_forward_start(void)
-{
-	reg_servo_angle(9, (STAND_DEG_09 + 5));
-	reg_servo_angle(10, (STAND_DEG_10 + 20));
-	reg_servo_angle(11, (STAND_DEG_11 - 5));
-}
-
-void back_right_forward_end(void)
-{
-	reg_servo_angle(9, (STAND_DEG_09 - 5));
-	reg_servo_angle(10, (STAND_DEG_10 - 5));
-	reg_servo_angle(11, (STAND_DEG_11 + 10));
-}
-
+//void front_left_forward_start(void)
+//{
+	//reg_servo_angle(0, (STAND_DEG_00 + 5));
+	//reg_servo_angle(1, (STAND_DEG_01 - 20));
+	//reg_servo_angle(2, (STAND_DEG_02 + 30));
+//}
+//
+//void front_left_forward_end(void)
+//{
+	//reg_servo_angle(0, (STAND_DEG_00 - 5));
+	//reg_servo_angle(1, (STAND_DEG_01 + 60));
+	//reg_servo_angle(2, (STAND_DEG_02 - 10));
+//}
+//
+//
+////Funktioner för att förflytta det högra främre benet
+//void front_right_forward_start(void)
+//{
+	//reg_servo_angle(15, (STAND_DEG_15 + 5));
+	//reg_servo_angle(16, (STAND_DEG_16 - 20));
+	//reg_servo_angle(17, (STAND_DEG_17 + 30));
+//}
+//void front_right_forward_end(void)
+//{
+	//reg_servo_angle(15, (STAND_DEG_15 - 5));
+	//reg_servo_angle(16, (STAND_DEG_16 + 60));
+	//reg_servo_angle(17, (STAND_DEG_17 - 10));
+//}
+//
+////Funktioner för att förflytta det vänstra mellersta benet
+//void middle_left_forward_start(void)
+//{
+	//reg_servo_angle(3, (STAND_DEG_03 - 5));
+	//reg_servo_angle(4, (STAND_DEG_04 + 10));
+	//reg_servo_angle(5, STAND_DEG_05);
+//}
+//
+//void middle_left_forward_end(void)
+//{
+	//reg_servo_angle(3, (STAND_DEG_03 + 5));
+	//reg_servo_angle(4, (STAND_DEG_04 - 20));
+	//reg_servo_angle(5, (STAND_DEG_05 + 30)); //tidigare 230
+//}
+//
+////Funktioner för att förflytta det högra mellersta benet
+//void middle_right_forward_start(void)
+//{
+	//reg_servo_angle(12, (STAND_DEG_12 - 5));
+	//reg_servo_angle(13, (STAND_DEG_13 + 10));
+	//reg_servo_angle(14, STAND_DEG_14);
+//}
+//
+//void middle_right_forward_end(void)
+//{
+	//reg_servo_angle(12, (STAND_DEG_12 + 5));
+	//reg_servo_angle(13, (STAND_DEG_13 - 20));
+	//reg_servo_angle(14, (STAND_DEG_14 + 30));
+//}
+//
+////Funktioner för att förflytta det bakre vänstra benet
+//void back_left_forward_start(void)
+//{
+	//reg_servo_angle(6, (STAND_DEG_06 + 5));
+	//reg_servo_angle(7, (STAND_DEG_07 + 20));
+	//reg_servo_angle(8, (STAND_DEG_08 - 5));
+//}
+//
+//void back_left_forward_end(void)
+//{
+	//reg_servo_angle(6, (STAND_DEG_06 - 5));
+	//reg_servo_angle(7, (STAND_DEG_07 - 5));
+	//reg_servo_angle(8, (STAND_DEG_08 + 10));
+//}
+//
+////Funktioner för att förflytta det högra bakre benet
+//void back_right_forward_start(void)
+//{
+	//reg_servo_angle(9, (STAND_DEG_09 + 5));
+	//reg_servo_angle(10, (STAND_DEG_10 + 20));
+	//reg_servo_angle(11, (STAND_DEG_11 - 5));
+//}
+//
+//void back_right_forward_end(void)
+//{
+	//reg_servo_angle(9, (STAND_DEG_09 - 5));
+	//reg_servo_angle(10, (STAND_DEG_10 - 5));
+	//reg_servo_angle(11, (STAND_DEG_11 + 10));
+//}
 
 /************************************************************************************************************
 *******************************************  Funktioner är enskilda ben v.2  ********************************
@@ -425,6 +424,27 @@ void back_right_forward_end(void)
 */
 
 /************************************************************************************************************
+******************************************Per's benfunktioner************************************************
+*************************************************************************************************************/
+
+void front_right_leg_forward(void)
+{
+	_delay_ms(500);
+	reg_servo_angle(0x06, 155);
+	reg_servo_angle(0x07, 80);
+	reg_servo_angle(0x08, 220);
+	action();
+	
+	_delay_ms(2000);
+	
+	reg_servo_angle(0x06, 130);
+	reg_servo_angle(0x07, STAND_DEG_07);
+	reg_servo_angle(0x08, STAND_DEG_08);
+	action();
+}
+
+
+/************************************************************************************************************
 *******************************************  HÅRDKODAD GÅNG  ***********************************************
 ************************************************************************************************************/
 
@@ -473,6 +493,58 @@ void led_blink(uint16_t i)
 	}
 }
 
+	/*===========================================================================
+			Idéer för att fixa inverskinematik och mjuka, korrekta steg
+	-----------------------------------------------------------------------------
+	- Att koppla vinklar mellan varandra så att när en vinkel ändras ändras en annan
+	
+	- Att stega igenom vinkeln för z medans man ändrar horisontellvinkeln.
+	
+	- Om det är möjligt koppla ändringen av "inverskinematikpunkten" till en 
+	  andragradare.
+	  
+	- Finns det en funktion som laddar flera vinklar till
+	
+	- lyft först sedan framåt, sen ned.
+	
+	-! Vi kanske bör fixa så att servona för rörelse i z-led har en lägre hastighet
+	  lägre då benet rör sig framåt(?) för att benet ska dra sig längs marken på väg tillbaka.
+	============================================================================*/
+	
+	/*============================================================================
+									Att göra
+	------------------------------------------------------------------------------	
+	- Fixa inverskinematikfunktionen
+	
+	- bestämma riktning och nollnivå för z-axeln
+	
+	- ta fram värden för vinklar för önskade positioner i en steg för varje ben
+	
+	- För in värdena i en (hash-(?))tabell
+	============================================================================*/
+	
+	/*============================================================================
+								Förslag till Affe H.	
+	------------------------------------------------------------------------------
+	- Undersök inverskinematikfunktionen. Jag kan ha hittat ett: theta_2 bör vara
+	  "theta_2 = round(150 - (alpha_1 + alpha_2));" (kan vara nån nolla på slutet, 
+	  beroende på version på matlab).
+	
+	- gör mätningar då:
+			reg_servo_angle(0x06, 105);
+			reg_servo_angle(0x07, 150);
+			reg_servo_angle(0x08, 100);
+	  (finns i main)
+	  vilket ska göra så att slutpunkten hamnar på x-axeln. 
+	 
+	- kolla värdena på alpha_1 och alpha_2 i matlab, alpha_2 blir imaginära...
+	 
+	- tror att utgångs värdet på theta_3 är fel, det ska inte vara 202. Kan oxå
+		vara fel på round(90 - beta), kanske inte ska vara 90...
+	
+	- Misstänker att z=0 är vid origo, kanske halvvägs ned på första servot.
+	=============================================================================*/
+
 int main (void)
 {
 	DDRB |= 0x03;
@@ -491,24 +563,31 @@ int main (void)
 	uint16_t return_packet;
 	LCD_Clear();
 	
+		_delay_ms(500);
+		reg_servo_angle(0x06, 105);
+		reg_servo_angle(0x07, 150);
+		reg_servo_angle(0x08, 100);
+		action();
+	
 	while(1)
 	{
-		set_servo_angle(0x06, 80);
-		_delay_ms(2000);
-		for(int i = 0; i <= 125; i+=5)
-		{
-			set_servo_angle(0x06, (80 + i));
-			_delay_ms(50);
-			send_servo_command (0x06, READ, 2, params);
-			return_packet = servo_read_status_packet();
-			_delay_ms(30);
-			LCD_Clear();
-			LCD_String("PRESENT ANGLE:");
-			LCD_Command(0xc0);
-			itoa(return_packet*0.293255, lcd_value, 10);						//Konvertera return_packet till string. Spara i lcd_value. Talbas 10
-			LCD_String(lcd_value);									// Write string on 2nd line
-			_delay_ms(140);
-		}
+	
+		//set_servo_angle(0x06, 80);
+		//_delay_ms(2000);
+		//for(int i = 0; i <= 125; i+=5)
+		//{
+			//set_servo_angle(0x06, (80 + i));
+			//_delay_ms(50);
+			//send_servo_command (0x06, READ, 2, params);
+			//return_packet = servo_read_status_packet();
+			//_delay_ms(30);
+			//LCD_Clear();
+			//LCD_String("PRESENT ANGLE:");
+			//LCD_Command(0xc0);
+			//itoa(return_packet*0.293255, lcd_value, 10);						//Konvertera return_packet till string. Spara i lcd_value. Talbas 10
+			//LCD_String(lcd_value);									// Write string on 2nd line
+			//_delay_ms(140);
+		//}
 	}
 	return 0;
 }
