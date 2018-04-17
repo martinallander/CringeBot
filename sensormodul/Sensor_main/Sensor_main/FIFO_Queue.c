@@ -90,6 +90,7 @@ int main()
   		enqueue(fp, sd);
   		i++;
   	}
+  	printf("Length: %d \n", fp->length);
   	while(i > 0)
   	{
   		printf("Value: %d \n", dequeue(fp).acc_x);
