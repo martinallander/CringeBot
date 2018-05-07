@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+
+<launch>
+  <!-- <param name="use_sim_time" value="true" /> -->
+  
+  <node name="rplidarNode"          pkg="rplidar_ros"  type="rplidarNode" output="screen">
+  <param name="serial_port"         type="string" value="/dev/ttyUSB0"/>
+  <param name="serial_baudrate"     type="int"    value="115200"/>
+  <param name="frame_id"            type="string" value="laser"/>
+  <param name="inverted"            type="bool"   value="false"/>
+  <param name="angle_compensate"    type="bool"   value="true"/>
+
+<node pkg="rviz" type="rviz" name="rviz"
+args="-d $(find rplidar_ros)/rviz_cfg/mapping_demo.rviz"/>
+  
+  <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="0 0 0 0 0 0 base_link laser 100" />
+  <node pkg="tf" type="static_transform_publisher" name="link2_broadcaster" args="0 0 0 0 0 0 odom base_link 100" />
+  <!--
+<node pkg="odom_test" name="odomtester" type="odom_example.py"/> -->
+ 
+  <node pkg="gmapping" type="slam_gmapping" name="simple_gmapping" output="screen">
+      <param name="map_update_interval" value="10" />
+      <param name="particles" value="1" />
+      <param name="angularUpdate" value="0.0" />
+      <param name="linearUpdate" value="0.0" />
+      <param name="iterations" value="10" />
+      <param name="delta" value="0.05" />
+      <param name="srr" value="1.0" />
+      <param name="srt" value="1.0" />
+      <param name="stt" value="1.0" />
+      <param name="str" value="1.0" />
+      <param name="maxUrange" value="8" />
+      <param name="llsamplerange" value="0.01"/>
+      <param name="llsamplestep" value="0.01"/>
+      <param name="lasamplerange" value="0.005"/>
+      <param name="lasamplestep" value="0.005"/>
+  </node>
+
+
+</launch>
